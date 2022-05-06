@@ -1,0 +1,45 @@
+{
+  "name": "@mycelial/core",
+  "version": "0.1.0",
+  "description": "The Mycelial Core API engine",
+  "license": "Apache-2.0",
+  "author": "Mycelial <hello@mycelial.com>",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.esm.js",
+  "scripts": {
+    "build": "bunchee ./src/index.ts --no-sourcemap",
+    "clean": "rimraf dist",
+    "dev": "npm run build -- -w",
+    "lint": "eslint . --ext .ts,.tsx --cache",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "types": "./dist/index.d.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "bunchee": "1.8.3",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "typescript": "4.5.2"
+  },
+  "keywords": [],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.esm.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "semi": false,
+    "useTabs": false,
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "trailingComma": "none"
+  }
+}

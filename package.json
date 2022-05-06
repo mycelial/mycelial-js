@@ -1,0 +1,41 @@
+{
+  "private": true,
+  "name": "mycelial",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "format": "prettier --write '**/*.{ts,tsx,md}'",
+    "lint": "turbo run lint"
+  },
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^2.6.2",
+    "turbo": "^1.0.24"
+  },
+  "engines": {
+    "node": ">=16.13.1"
+  },
+  "turbo": {
+    "baseBranch": "origin/main",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "dist/**"
+        ]
+      },
+      "lint": {
+        "outputs": []
+      },
+      "dev": {
+        "cache": false
+      }
+    }
+  }
+}
