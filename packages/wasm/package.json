@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "wasm-pack build -d dist --out-name mycelial_wasm -s mycelial -t bundler"
+  }
+}
