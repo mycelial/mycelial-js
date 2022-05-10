@@ -14,7 +14,9 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "types": "./dist/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "@mycelial/wasm": "^0.1.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
