@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The Mycelial Core API engine",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -15,7 +15,7 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@mycelial/wasm": "^0.1.0"
+    "@mycelial/wasm": "file:../wasm"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -24,18 +24,19 @@
     "bunchee": "1.8.3",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
-    "typescript": "4.5.2"
+    "tslib": "^2.4.0",
+    "typescript": "~4.7.1-rc"
   },
   "keywords": [],
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.esm.js",
+      "import": "./dist/index.esm.js",
       "types": "./dist/index.d.ts"
     }
   },
+  "sideEffects": false,
   "prettier": {
     "tabWidth": 2,
     "semi": false,
