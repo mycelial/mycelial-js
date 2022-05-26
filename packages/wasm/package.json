@@ -1,5 +1,20 @@
 {
+  "name": "@mycelial/wasm",
+  "version": "0.2.0",
+  "description": "The Mycelial WASM Interface",
+  "license": "Apache-2.0",
+  "author": "Mycelial <hello@mycelial.com>",
+  "module": "./dist/module/index.js",
+  "keywords": [],
   "scripts": {
-    "build": "wasm-pack build -d dist --out-name mycelial_wasm -s mycelial -t bundler"
-  }
+    "build": "npm run build:nodejs && npm run build:module",
+    "build:nodejs": "wasm-pack build -d dist/nodejs --out-name index -s mycelial -t nodejs",
+    "build:module": "wasm-pack build -d dist/module --out-name index -s mycelial -t bundler"
+  },
+  "exports": {
+    "node": "./dist/nodejs/index.js",
+    "import": "./dist/module/index.js"
+  },
+  "types": "./dist/module/index.d.ts",
+  "sideEffects": false
 }
