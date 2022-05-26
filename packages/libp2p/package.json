@@ -1,0 +1,20 @@
+{
+  "name": "@mycelial/libp2p",
+  "version": "0.1.0",
+  "description": "The Mycelial Core API engine",
+  "license": "Apache-2.0",
+  "author": "Mycelial <hello@mycelial.com>",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.esm.js",
+  "scripts": {
+    "build": "bunchee ./src/index.ts --no-sourcemap",
+    "clean": "rimraf dist",
+    "dev": "npm run build -- -w",
+    "lint": "eslint . --ext .ts,.tsx --cache",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@mycelial/core": "workspace:^0.2.0"
+  }
+}

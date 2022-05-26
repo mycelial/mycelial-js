@@ -10,6 +10,7 @@ export interface IIndex {
 export interface ISpore {
   key: number
   log: IIndex
+  namespace: string
 }
 
 class ReadableSporeStream {
@@ -38,10 +39,12 @@ export class Spore implements ISpore {
   key: number
   log: Index.List
   eventTarget: EventTarget
+  namespace: string
 
-  constructor(key: number) {
+  constructor(namespace: string, key: number) {
     this.eventTarget = new EventTarget()
 
+    this.namespace = namespace;
     this.key = key
 
     this.log = Index.List.new(key)
