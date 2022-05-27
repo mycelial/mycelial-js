@@ -1,20 +1,32 @@
 {
   "name": "@mycelial/libp2p",
   "version": "0.1.0",
-  "description": "The Mycelial Core API engine",
+  "description": "The Mycelial libp2p Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.esm.js",
+  "type": "module",
   "scripts": {
-    "build": "bunchee ./src/index.ts --no-sourcemap",
-    "clean": "rimraf dist",
-    "dev": "npm run build -- -w",
-    "lint": "eslint . --ext .ts,.tsx --cache",
-    "lint:fix": "npm run lint -- --fix"
+    "build": "tsc -p tsconfig.build.json"
   },
-  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
   "dependencies": {
-    "@mycelial/core": "workspace:^0.2.0"
+    "@mycelial/core": "0.2.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "bunchee": "1.8.3",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "tslib": "^2.4.0",
+    "typescript": "~4.7.1-rc"
   }
 }

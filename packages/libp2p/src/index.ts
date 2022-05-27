@@ -8,12 +8,8 @@ export function create(node: any, spore: any) {
     ops: getTopicName(spore.namespace, 'ops'),
   }
 
-  node.addEventListener('peer:discovery', (evt: any) => {
-    // const peer = evt.detail
-  })
-
   node.connectionManager.addEventListener('peer:connect', async (evt: any) => {
-    const connection = evt.detail
+    // const connection = evt.detail
 
     await node.pubsub.subscribe(topics.ops);
     await node.pubsub.subscribe(topics.states);
