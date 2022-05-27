@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/wasm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The Mycelial WASM Interface",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
