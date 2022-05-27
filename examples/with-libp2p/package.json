@@ -1,0 +1,29 @@
+{
+  "name": "@mycelial-examples/with-libp2p",
+  "version": "0.1.0",
+  "description": "A libp2p node running in the browser",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack-dev-server"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^1.0.0",
+    "@chainsafe/libp2p-noise": "^6.1.1",
+    "@libp2p/bootstrap": "^1.0.4",
+    "@libp2p/mplex": "^1.0.4",
+    "@libp2p/webrtc-star": "^1.0.8",
+    "@libp2p/websockets": "^1.0.7",
+    "@mycelial/core": "^0.2.2",
+    "@mycelial/libp2p": "workspace:^0.2.3",
+    "libp2p": "^0.37.0"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "ts-loader": "^9.3.0",
+    "typescript": "~4.5.2",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
+  }
+}
