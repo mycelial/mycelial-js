@@ -13,7 +13,7 @@ importers:
   packages/core:
     specifiers:
       '@babel/core': ^7.0.0
-      '@mycelial/wasm': 0.2.1
+      '@mycelial/wasm': 0.2.2
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       bunchee: 1.8.3
