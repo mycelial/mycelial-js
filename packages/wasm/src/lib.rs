@@ -1,147 +1,201 @@
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
-use js_sys;
 
 use mycelial_crdt::list;
 use mycelial_crdt::vclock;
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(js_namespace=console)]
+    #[wasm_bindgen(js_namespace = console)]
     fn log(_: &str);
 }
 
 #[wasm_bindgen]
 pub struct List(list::List);
 
-#[derive(Debug)]
-struct Value(list::Value);
-
-
-#[derive(Debug)]
-pub enum ValueError {
+#[derive(Debug, Serialize, Deserialize)]
+pub enum ListError {
+    /// Wraps original ListError
     ListError(list::ListError),
-    JsValueError,
+
+    /// Bad value from JS which could not be represented as a list::Value
+    ValueError(String),
+
+    /// Bad VClock passed to `diff` func
+    VClockError(),
+
+    /// Bad diff passed to `apply` func
+    DiffError(),
 }
 
-
-impl From<list::ListError> for ValueError {
-    fn from(e: list::ListError) -> Self {
-        Self::ListError(e)
-    }
-}
-
-
-impl From<ValueError> for JsValue {
-    fn from(e: ValueError) -> Self {
-        // FIXME: this is terrible
-        match e {
-            ValueError::JsValueError => JsValue::from(""),
-            ValueError::ListError(e) => JsValue::from(&format!("{:?}", e)),
+impl std::fmt::Display for ListError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            ListError::ListError(e) => write!(f, "{:?}", e),
+            ListError::ValueError(e) => write!(f, "ValueError: {:?}", e),
+            ListError::VClockError() => write!(f, "VClockError: vclock should be json string"),
+            ListError::DiffError() => write!(f, "DiffError: diff should be json string"),
         }
     }
 }
+impl std::error::Error for ListError {}
 
-impl TryFrom<&JsValue> for Value {
-    type Error = ValueError;
+fn jsvalue_to_value(value: &JsValue) -> Result<list::Value, ListError> {
+    if let Some(s) = value.as_string() {
+        return Ok(list::Value::Str(s));
+    }
+    if let Some(f) = value.as_f64() {
+        return Ok(list::Value::Float(f));
+    }
+    if let Some(b) = value.as_bool() {
+        return Ok(list::Value::Bool(b));
+    }
 
-    fn try_from(jsv: &JsValue) -> Result<Self, Self::Error> {
-        match jsv {
-            v if v.is_string() => {
-                Ok(Value(list::Value::Str(v.as_string().unwrap())))
-            },
-            v if v.is_object() => {
-                let vec = match TryInto::<js_sys::Array>::try_into(jsv.clone()) {
-                    Ok(arr) => {
-                        arr.iter()
-                            .map(|ref val| { Ok(Value::try_from(val)?.0) })
-                            .collect::<Result<Vec<list::Value>, ValueError>>()?
-                    },
-                    Err(_) => return Err(ValueError::JsValueError),
-                };
-                Ok(Self(list::Value::Vec(vec)))
-            },
-            _ => Err(ValueError::JsValueError),
+    // it's important to check whether the value is a *real* array
+    // otherwise aliasing rules are broken, it's not clear why yet
+    // broken aliasing rules makes list unusable
+    // FIXME: find why it's happening
+    // to replicate - remove this check, try to insert undefined
+    if js_sys::Array::is_array(value) {
+        if let Ok(arr) = TryInto::<js_sys::Array>::try_into(value.clone()) {
+            let mut vec = vec![];
+            for val in arr.iter() {
+                vec.push(jsvalue_to_value(&val)?)
+            }
+            return Ok(list::Value::Vec(vec));
         }
+    }
+    Err(ListError::ValueError(format!(
+        "unsupported value of type '{}': {:?}",
+        value.js_typeof().as_string().unwrap(),
+        value
+    )))
+}
+
+fn value_to_jsvalue(value: &list::Value) -> Result<JsValue, ListError> {
+    match value {
+        list::Value::Str(s) => Ok(s.into()),
+        list::Value::Bool(b) => Ok((*b).into()),
+        list::Value::Float(f) => Ok((*f).into()),
+        list::Value::Vec(v) => {
+            let vec = v
+                .iter()
+                .map(value_to_jsvalue)
+                .collect::<Result<Vec<JsValue>, ListError>>()?;
+            Ok(js_sys::Array::from_iter(vec.into_iter()).into())
+        }
+        list::Value::Empty | list::Value::Tombstone(_) => {
+            // Empty && Tombstone values are unreachable, `to_vec` operation filters them out
+            unreachable!()
+        }
+        other => Err(ListError::ValueError(format!("unsupported: {:?}", other))),
     }
 }
 
 #[wasm_bindgen]
 impl List {
+    /// Create new instance of a List CRDT
+    // FIXME: process should be u64
+    // u64 supported only as a BigInt (why? bigint is unsized)
+    // not clear how to add autocast from f64 to BigInt on JS side
+    // switch to f64?
     pub fn new(process: usize) -> Self {
-        Self( list::List::new(process as u64) )
+        Self(list::List::new(process as u64))
     }
 
-    pub fn append(&mut self, val: &JsValue) -> Result<(), JsValue> {
-        self.0.append( Self::to_value(val)? ).map_err(|e| ValueError::from(e).into())
-    }
-
+    /// Set hook, which will be invoked on local list update
+    ///
+    /// Remove update in that context would be diff apply
     pub fn set_on_update(&mut self, func: &js_sys::Function) {
         let func = func.clone();
         let closure: Box<dyn Fn(&list::Op) + 'static> = Box::new(move |ops: &list::Op| {
-            match serde_json::to_string(&[ops]) {
-                Ok(s) => { func.call1(&JsValue::null(), &JsValue::from(s)).ok(); }
-                Err(_) => (),
+            if let Ok(s) = serde_json::to_string(&[ops]) {
+                func.call1(&JsValue::null(), &JsValue::from(s)).ok();
             }
         });
         self.0.set_on_update(closure);
     }
 
+    /// Remove hook
     pub fn unset_on_update(&mut self) {
         self.0.unset_on_update()
     }
 
-    pub fn insert(&mut self, index: usize, val: &JsValue) -> Result<(), JsValue> {
-        self.0.insert(index, Self::to_value(val)? ).map_err(|e| ValueError::from(e).into())
+    /// Append value to the end of the list
+    pub fn append(&mut self, val: &JsValue) -> Result<(), JsError> {
+        Ok(self.0.append(jsvalue_to_value(val)?)?)
     }
 
-    pub fn delete(&mut self, index: usize) {
-        self.0.delete(index)
+    /// Insert value at head of the list
+    pub fn prepend(&mut self, val: &JsValue) -> Result<(), JsError> {
+        Ok(self.0.prepend(jsvalue_to_value(val)?)?)
     }
 
-    pub fn to_vec(&self) -> js_sys::Array {
-        js_sys::Array::from_iter(self.0.to_vec().into_iter().map(Self::to_jsvalue))
+    /// Insert values at given index
+    pub fn insert(&mut self, index: usize, val: &JsValue) -> Result<(), JsError> {
+        Ok(self.0.insert(index, jsvalue_to_value(val)?)?)
     }
 
+    /// Delete value at given index
+    pub fn delete(&mut self, index: usize) -> Result<(), JsError> {
+        Ok(self.0.delete(index)?)
+    }
+
+    /// Dump stored values into vector
+    pub fn to_vec(&self) -> Result<JsValue, JsError> {
+        let arr = js_sys::Array::new();
+        for value in self.0.iter() {
+            arr.push(&value_to_jsvalue(value)?);
+        }
+        Ok(arr.into())
+    }
+
+    /// Encode inner vclock into JSON
     pub fn vclock(&self) -> JsValue {
         serde_json::to_string(self.0.vclock()).unwrap().into()
     }
 
-    pub fn diff(&self, value: &JsValue) -> Result<JsValue, JsValue> {
-        let vclock: vclock::VClock = match value.is_string() {
-            true => serde_json::from_str(&value.as_string().unwrap()).map_err(|_| ValueError::JsValueError)?,
-            false => return Err(ValueError::JsValueError.into()),
+    /// Calculate diff and encode into JSON
+    ///
+    /// Passed value is expected to be JSON serialized VClock
+    pub fn diff(&self, value: &JsValue) -> Result<JsValue, JsError> {
+        let value = match value.as_string() {
+            Some(s) => s,
+            None => return Err(ListError::VClockError().into()),
+        };
+        let vclock = match serde_json::from_str::<vclock::VClock>(&value) {
+            Ok(vclock) => vclock,
+            Err(_) => return Err(ListError::VClockError().into()),
         };
         let diff = self.0.diff(&vclock);
-        Ok(serde_json::to_string(&diff).map_err(|_| ValueError::JsValueError)?.into())
+        Ok(serde_json::to_string(&diff).unwrap().into())
     }
 
-    pub fn apply(&mut self, diff: &JsValue) -> Result<(), JsValue> {
-        let s = match diff.is_string() {
-            true => diff.as_string().unwrap(),
-            false => return Err(ValueError::JsValueError.into()),
+    /// Apply Diff
+    ///
+    /// Passed diff expected to be JSON serialized vector of Operations
+    pub fn apply(&mut self, diff: &JsValue) -> Result<(), JsError> {
+        let s = match diff.as_string() {
+            Some(s) => s,
+            None => return Err(ListError::DiffError().into()),
         };
-        let diff: Vec<list::Op> = serde_json::from_str(&s)
-            .map_err(|_| ValueError::JsValueError)?;
-        self.0.apply(&diff).map_err(|e| ValueError::ListError(e).into())
+        let diff: Vec<list::Op> = match serde_json::from_str(&s) {
+            Ok(encoded) => encoded,
+            // fIXME:
+            Err(_) => return Err(ListError::DiffError().into()),
+        };
+        Ok(self.0.apply(&diff)?)
     }
 
-    fn to_value(val: &JsValue) -> Result<list::Value, JsValue> {
-        match Value::try_from(val) {
-            Ok(v) => Ok(v.0),
-            Err(e) => Err(e.into()),
-        }
+    /// Dump CRDT into serialized JSON
+    pub fn dump(&self) -> Result<JsValue, JsError> {
+        serde_json::to_string(&self.0.diff(&vclock::VClock::new()))
+            .map(|s| s.into())
+            .map_err(|_e| ListError::DiffError().into())
     }
+}
 
-    fn to_jsvalue(val: &list::Value) -> JsValue {
-        match val {
-            list::Value::Str(s) => JsValue::from(s),
-            list::Value::Vec(v) => {
-                js_sys::Array::from_iter(v.into_iter().map(Self::to_jsvalue)).into()
-            },
-            list::Value::Empty | list::Value::Tombstone(_) => {
-                // Empty && Tombstone values are unreachable, `to_vec` operation filters them out
-                unreachable!()
-            }
-        }
-    }
+#[wasm_bindgen(start)]
+pub fn init() {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 }
