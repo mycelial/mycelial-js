@@ -104,8 +104,6 @@ impl List {
     }
 
     /// Set hook, which will be invoked on local list update
-    ///
-    /// Remove update in that context would be diff apply
     pub fn set_on_update(&mut self, func: &js_sys::Function) {
         let func = func.clone();
         let closure: Box<dyn Fn(&list::Op) + 'static> = Box::new(move |ops: &list::Op| {
@@ -116,9 +114,23 @@ impl List {
         self.0.set_on_update(closure);
     }
 
-    /// Remove hook
+    /// Remove on update hook
     pub fn unset_on_update(&mut self) {
         self.0.unset_on_update()
+    }
+
+    /// Set hook, which will be invoked on remote update (apply)
+    pub fn set_on_apply(&mut self, func: &js_sys::Function) {
+        let func = func.clone();
+        let closure: Box<dyn Fn() + 'static> = Box::new(move || {
+            func.call0(&JsValue::null()).ok();
+        });
+        self.0.set_on_apply(closure);
+    }
+
+    /// Unset on apply hook
+    pub fn unset_on_apply(&mut self) {
+        self.0.unset_on_apply()
     }
 
     /// Append value to the end of the list
