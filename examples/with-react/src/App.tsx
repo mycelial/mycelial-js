@@ -1,45 +1,33 @@
 import React from 'react';
-import * as Mycelial from '@mycelial/core';
-import * as Websocket from '@mycelial/websocket';
+import * as Mycelial from '@mycelial/react';
 
 import logo from './logo.svg';
 import './App.css';
-
 
 function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
 function App() {
-  const [state, setState] = React.useState([]);
+  const [state, setState] = React.useState<any>({
+    snapshot: [],
+  });
 
-  React.useEffect(() => {
-    const instance = Mycelial.create("orders", getRandomInt(1000));
-    instance.commit([ ["a", "b", "c"] ])
+  const { commit } = Mycelial.useInstance("orders", getRandomInt(1000), (snapshot: any) => {
+    setState({ ...state, snapshot })
+  })
 
-    const ws = Websocket.create(instance, {
-      endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
-    });
-
-    instance.events.addEventListener('update', (evt) => {
-      console.log('update', evt);
-
-      setState(instance.log.to_vec());
-    });
-
-    instance.events.addEventListener('apply', (evt) => {
-      console.log('apply', evt);
-
-      setState(instance.log.to_vec());
-    });
-  }, []);
+  const handleClick = () => {
+    commit([ ["a", "b", "c"] ])
+  }
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <button onClick={handleClick}>Add</button>
         <code>
-          <pre>{JSON.stringify(state, null, '    ')}</pre>
+          <pre>{JSON.stringify(state.snapshot, null, '    ')}</pre>
         </code>
       </header>
     </div>

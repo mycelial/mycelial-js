@@ -10,39 +10,11 @@ importers:
       prettier: 2.6.2
       turbo: 1.2.8
 
-  examples/__with-react:
-    specifiers:
-      '@mycelial/core': 0.2.4
-      '@mycelial/websocket': 0.1.0
-      '@types/react': ^18.0.12
-      '@types/react-dom': ^18.0.5
-      copy-webpack-plugin: ^11.0.0
-      react: ^18.1.0
-      react-dom: ^18.1.0
-      ts-loader: ^9.3.0
-      typescript: ~4.5.2
-      webpack: ^5.72.0
-      webpack-cli: ^4.9.2
-      webpack-dev-server: ^4.9.0
-    dependencies:
-      '@mycelial/core': link:../../packages/core
-      '@mycelial/websocket': link:../../packages/websocket
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-    devDependencies:
-      '@types/react': 18.0.12
-      '@types/react-dom': 18.0.5
-      copy-webpack-plugin: 11.0.0_webpack@5.72.1
-      ts-loader: 9.3.0_typescript@4.5.5+webpack@5.72.1
-      typescript: 4.5.5
-      webpack: 5.72.1_webpack-cli@4.9.2
-      webpack-cli: 4.9.2_158fede7a4a6cac230ff2acad2bc4fff
-      webpack-dev-server: 4.9.0_webpack-cli@4.9.2+webpack@5.72.1
-
   examples/with-react:
     specifiers:
       '@craco/craco': ^6.4.3
       '@mycelial/core': 0.2.4
+      '@mycelial/react': 0.1.1
       '@mycelial/websocket': 0.1.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
@@ -58,6 +30,7 @@ importers:
       web-vitals: ^2.1.4
     dependencies:
       '@mycelial/core': link:../../packages/core
+      '@mycelial/react': link:../../packages/react
       '@mycelial/websocket': link:../../packages/websocket
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_react-dom@18.1.0+react@18.1.0
@@ -139,6 +112,8 @@ importers:
 
   packages/react:
     specifiers:
+      '@mycelial/core': 0.2.4
+      '@mycelial/websocket': 0.1.0
       '@types/lodash.isequal': ^4.5.6
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
@@ -147,6 +122,9 @@ importers:
       eslint-config-prettier: ^8.5.0
       tslib: ^2.4.0
       typescript: ~4.7.1-rc
+    dependencies:
+      '@mycelial/core': link:../core
+      '@mycelial/websocket': link:../websocket
     devDependencies:
       '@types/lodash.isequal': 4.5.6
       '@typescript-eslint/eslint-plugin': 5.22.0_bc080f9b1626e7689fbbfdd31fdd4fc2
@@ -2481,6 +2459,7 @@ packages:
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
+    dev: false
 
   /@types/q/1.5.5:
     resolution: {integrity: sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ==}
@@ -2496,6 +2475,7 @@ packages:
     resolution: {integrity: sha512-OWPWTUrY/NIrjsAPkAk1wW9LZeIjSvkXRhclsFO8CZcZGCOg2G0YZy4ft+rOyYxy8B7ui5iZzi9OkDebZ7/QSA==}
     dependencies:
       '@types/react': 18.0.12
+    dev: false
 
   /@types/react/18.0.12:
     resolution: {integrity: sha512-duF1OTASSBQtcigUvhuiTB1Ya3OvSy+xORCiEf20H0P0lzx+/KeVsA99U5UjLXSbyo1DRJDlLKqTeM1ngosqtg==}
@@ -2503,6 +2483,7 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.0
+    dev: false
 
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
@@ -2514,6 +2495,7 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: false
 
   /@types/serve-index/1.9.1:
     resolution: {integrity: sha512-d/Hs3nWDxNL2xAczmOVZNj92YZCS6RGxfBPjKzuu/XirCgXdpKEb88dYNbrYGint6IVWLNP+yonwVAuRC0T2Dg==}
@@ -4243,6 +4225,7 @@ packages:
 
   /csstype/3.1.0:
     resolution: {integrity: sha512-uX1KG+x9h5hIJsaKR9xHUeUraxf8IODOwq9JLNPq6BwB04a/xgpq3rcx47l5BZu5zBPlgD342tdke3Hom/nJRA==}
+    dev: false
 
   /damerau-levenshtein/1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -9156,7 +9139,7 @@ packages:
       serialize-javascript: 6.0.0
       source-map: 0.6.1
       terser: 5.13.1
-      webpack: 5.72.1
+      webpack: 5.72.1_webpack-cli@4.9.2
 
   /terser/5.13.1:
     resolution: {integrity: sha512-hn4WKOfwnwbYfe48NgrQjqNOH9jzLqRcIfbYytOXCOv46LBfWr9bDS17MQqOi+BWGD0sJK3Sj5NC/gJjiojaoA==}
@@ -9704,7 +9687,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.0.0
-      webpack: 5.72.1
+      webpack: 5.72.1_webpack-cli@4.9.2
 
   /webpack-dev-server/4.9.0_webpack-cli@4.9.2+webpack@5.72.1:
     resolution: {integrity: sha512-+Nlb39iQSOSsFv0lWUuUTim3jDQO8nhK3E68f//J2r5rIcp4lULHXz2oZ0UVdEeWXEh5lSzYUlzarZhDAeAVQw==}

@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Mycelial React Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -18,6 +18,8 @@
     }
   },
   "dependencies": {
+    "@mycelial/core": "0.2.4",
+    "@mycelial/websocket": "0.1.0"
   },
   "devDependencies": {
     "@types/lodash.isequal": "^4.5.6",

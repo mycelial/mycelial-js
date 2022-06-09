@@ -5,6 +5,7 @@
   "keywords": [],
   "dependencies": {
     "@mycelial/core": "0.2.4",
+    "@mycelial/react": "0.1.1",
     "@mycelial/websocket": "0.1.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
