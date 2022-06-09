@@ -1,8 +1,8 @@
-// const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: "./index.js",
+  entry: "./index.ts",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
@@ -29,8 +29,15 @@ module.exports = {
 	},
 	experiments: {
 		asyncWebAssembly: true
-	}
-  /*plugins: [
-    new CopyWebpackPlugin(['index.html'])
-  ],*/
+	},
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "resources/*",
+          to: "[name][ext]"
+        }
+      ],
+    }),
+  ],
 };

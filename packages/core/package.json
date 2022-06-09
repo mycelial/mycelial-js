@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/core",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "The Mycelial Core API engine",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -15,7 +15,7 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@mycelial/wasm": "0.2.2"
+    "@mycelial/wasm": "0.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
