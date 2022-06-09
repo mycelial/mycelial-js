@@ -9,28 +9,6 @@ export interface Instance {
   events: EventTarget
 }
 
-/*class ReadableInstanceStream {
-  instance
-  handler: any
-  subscription: any
-
-  constructor(instance: Instance) {
-    this.instance = instance
-  }
-
-  start(controller: any) {
-    const handler = (instance: Instance, ops: any, snapshot: any) => {
-      controller.enqueue(ops)
-    }
-
-    this.subscription = this.instance.subscribe(handler)
-  }
-
-  cancel() {
-    this.subscription()
-  }
-}*/
-
 export class Instance implements Instance {
   namespace: string
   key: number
@@ -72,23 +50,3 @@ export class Instance implements Instance {
 export function create(namespace: string, key: number) {
   return new Instance(namespace, key)
 }
-
-/*export function createReader(instance: Instance) {
-  return new ReadableStream(new ReadableInstanceStream(instance))
-}
-
-class WritableInstanceStream {
-  instance: Instance
-
-  constructor(instance: Instance) {
-    this.instance = instance
-  }
-
-  write(ops: any) {
-    this.instance.apply(ops)
-  }
-}
-
-export function createWriter(instance: Instance) {
-  return new WritableStream(new WritableInstanceStream(instance))
-}*/
