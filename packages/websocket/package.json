@@ -1,7 +1,7 @@
 {
-  "name": "@mycelial/libp2p",
+  "name": "@mycelial/websocket",
   "version": "0.1.0",
-  "description": "The Mycelial libp2p Adapter",
+  "description": "The Mycelial Websocket Relay Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
   "type": "module",
@@ -18,9 +18,10 @@
     }
   },
   "dependencies": {
-    "@mycelial/core": "0.2.2"
+    "lodash.isequal": "^4.5.0"
   },
   "devDependencies": {
+    "@types/lodash.isequal": "^4.5.6",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "bunchee": "1.8.3",
