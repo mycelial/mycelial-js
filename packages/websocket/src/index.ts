@@ -1,6 +1,6 @@
 import isEqual from 'lodash.isequal';
 
-function message(instance: any, kind: string, payload: string) {
+function asMessage(instance: any, kind: string, payload: string) {
   return JSON.stringify({
     version: 'v0alpha',
     kind: kind,
@@ -20,13 +20,13 @@ export function create(instance: any, opts: any) {
 
     const ops = evt.detail;
 
-    socket.send(message(instance, 'diff', JSON.stringify(ops)))
+    socket.send(asMessage(instance, 'diff', JSON.stringify(ops)))
   }
 
   instance.events.addEventListener('update', handleUpdate);
 
   socket.addEventListener('open', (evt) => {
-    socket.send(message(instance, 'sync', instance.log.vclock));
+    socket.send(asMessage(instance, 'sync', instance.log.vclock()));
   });
 
   const handleSync = (message: any) => {
@@ -34,13 +34,13 @@ export function create(instance: any, opts: any) {
     const nextState = JSON.parse(message.payload);
 
     if (!isEqual(currentState, nextState)) {
-      socket.send(message(instance, 'sync', instance.log.vclock()))
+      socket.send(asMessage(instance, 'sync', instance.log.vclock()))
     }
 
     const diff = JSON.parse(instance.log.diff(message.payload));
 
     if (diff.length > 0) {
-      socket.send(message(instance, 'diff', JSON.stringify(diff)))
+      socket.send(asMessage(instance, 'diff', JSON.stringify(diff)))
     }
   }
 
@@ -50,7 +50,7 @@ export function create(instance: any, opts: any) {
     } catch (e) {
       console.warn('Potential OutOfOrder exception happened, resyncing now')
 
-      socket.send(message(instance, 'sync', instance.log.vclock()));
+      socket.send(asMessage(instance, 'sync', instance.log.vclock()));
     }
   }
 
