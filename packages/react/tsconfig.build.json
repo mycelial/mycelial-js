@@ -1,0 +1,25 @@
+{
+  "include": ["./src"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "lib": ["es2020", "dom"],
+    "target": "es2020",
+
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "types": ["node"]
+  }
+}

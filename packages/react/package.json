@@ -1,0 +1,32 @@
+{
+  "name": "@mycelial/react",
+  "version": "0.1.0",
+  "description": "The Mycelial React Adapter",
+  "license": "Apache-2.0",
+  "author": "Mycelial <hello@mycelial.com>",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/lodash.isequal": "^4.5.6",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "bunchee": "1.8.3",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "tslib": "^2.4.0",
+    "typescript": "~4.7.1-rc"
+  }
+}
