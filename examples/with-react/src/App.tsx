@@ -18,7 +18,19 @@ function App() {
   })
 
   const handleClick = () => {
-    commit([ ["a", "b", "c"] ])
+    commit([
+      {
+        $id: "100500",
+        name: "Hooman Name",
+        email: "hooman@example.com"
+      },
+
+      {
+        $id: "100501",
+        name: "Person Name",
+        email: "person@example.com"
+      }
+    ])
   }
 
   return (

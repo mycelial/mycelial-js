@@ -40,9 +40,17 @@ export class Instance implements Instance {
     this.log.apply(JSON.stringify(ops))
   }
 
-  commit(triples: Array<Triple>) {
-    for (const triple of triples) {
-      this.log.append(triple)
+  commit(entities: Array<any>) {
+    for (const entity of entities) {
+      if (entity.$id) {
+        for (const [attr, value] of Object.entries(entity)) {
+          this.log.append([
+            entity.$id,
+            attr,
+            value
+          ])
+        }
+      }
     }
   }
 }
