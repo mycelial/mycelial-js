@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "The Mycelial Core API engine",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",

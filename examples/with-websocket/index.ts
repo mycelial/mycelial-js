@@ -22,6 +22,9 @@ function getRandomInt(max) {
   });
 
   mycelial.commit([
-    ["id", "attribute", "value"]
+    {
+      $id: "id",
+      attribute: "value"
+    }
   ]);
 })();
