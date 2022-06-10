@@ -1,5 +1,7 @@
 # mycelial-js
 
+**This library is an alpha release and is in active development. Please expect breaking changes!**
+
 > Build local-first, distributed, decentralized applications
 
 What does `local-first, distributed, decentralized applications` mean?
