@@ -41,18 +41,26 @@ export class Instance implements Instance {
   }
 
   commit(entities: Array<any>) {
-    for (const entity of entities) {
-      if (entity.$id) {
-        for (const [attr, value] of Object.entries(entity)) {
-          this.log.append([
-            entity.$id,
-            attr,
-            value
-          ])
+    with_aggregate(this.log, () => {
+      for (const entity of entities) {
+        if (entity.$id) {
+          for (const [attr, value] of Object.entries(entity)) {
+            this.log.append([
+              entity.$id,
+              attr,
+              value
+            ])
+          }
         }
       }
-    }
+    })
   }
+}
+
+function with_aggregate(log: Index.List, cb: () => void) {
+  log.aggregate_hooks(true);
+  cb();
+  log.aggregate_hooks(false);
 }
 
 export function create(namespace: string, key: number) {
