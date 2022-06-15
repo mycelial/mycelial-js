@@ -1,4 +1,4 @@
-use std::cell::{RefMut, RefCell};
+use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
@@ -30,7 +30,7 @@ impl AggregateState {
         }
     }
 
-    fn get_mut<'a>(this: &'a Rc<RefCell<Self>>) -> RefMut<'a, Self> {
+    fn get_mut(this: &Rc<RefCell<Self>>) -> RefMut<'_, Self> {
         this.as_ref().borrow_mut()
     }
 
@@ -85,18 +85,25 @@ impl std::fmt::Display for ListError {
             ListError::ListError(e) => write!(f, "{:?}", e),
             ListError::ValueError(e) => write!(f, "ValueError: {:?}", e),
             ListError::VClockError(e) => {
-                let e = if e.is_some() { format!(", error: {}", e.as_ref().unwrap()) } else { "".into() };
+                let e = if e.is_some() {
+                    format!(", error: {}", e.as_ref().unwrap())
+                } else {
+                    "".into()
+                };
                 write!(f, "VClockError: vclock should be json string{}", e)
-            },
+            }
             ListError::DiffError(ref e) => {
-                let e = if e.is_some() { format!(", error: {}", e.as_ref().unwrap()) } else { "".into() };
+                let e = if e.is_some() {
+                    format!(", error: {}", e.as_ref().unwrap())
+                } else {
+                    "".into()
+                };
                 write!(f, "DiffError: diff should be json string{}", e)
-            },
+            }
         }
     }
 }
 impl std::error::Error for ListError {}
-
 
 #[wasm_bindgen]
 impl List {
@@ -227,7 +234,7 @@ impl List {
     /// Set hooks aggregation into inner buffer, invoke hooks when unset
     pub fn aggregate_hooks(&mut self, aggregate: bool) {
         self.aggregate_hooks = aggregate;
-        if aggregate == false {
+        if !aggregate {
             // if we switched from aggregation - call hooks immediately
             self.call_on_update();
             self.call_on_apply();
@@ -240,7 +247,7 @@ impl List {
         }
         let mut state = AggregateState::get_mut(&self.aggregate_state);
         let ops = state.get_ops();
-        if ops.len() == 0 {
+        if ops.is_empty() {
             return;
         }
         if let Some(ref hook) = self.on_update {
