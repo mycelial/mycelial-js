@@ -1,4 +1,6 @@
-use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use wasm_bindgen::prelude::*;
 
 use mycelial_crdt::list;
@@ -11,9 +13,19 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub struct List(list::List);
+pub struct List {
+    inner: list::List,
 
-#[derive(Debug, Serialize, Deserialize)]
+    aggregate_hooks: bool,
+
+    on_update: Option<js_sys::Function>,
+    ops_buffer: Rc<RefCell<Vec<list::Op>>>,
+
+    on_apply: Option<js_sys::Function>,
+    apply_call_required: bool,
+}
+
+#[derive(Debug)]
 pub enum ListError {
     /// Wraps original ListError
     ListError(list::ListError),
@@ -95,68 +107,95 @@ fn value_to_jsvalue(value: &list::Value) -> Result<JsValue, ListError> {
 #[wasm_bindgen]
 impl List {
     /// Create new instance of a List CRDT
-    // FIXME: process should be u64
-    // u64 supported only as a BigInt (why? bigint is unsized)
-    // not clear how to add autocast from f64 to BigInt on JS side
-    // switch to f64?
-    pub fn new(process: usize) -> Self {
-        Self(list::List::new(process as u64))
+    pub fn new(process: f64) -> Self {
+        Self {
+            inner: list::List::new(process as u64),
+            on_update: None,
+            ops_buffer: Rc::new(RefCell::new(Vec::new())),
+            on_apply: None,
+            apply_call_required: false,
+            aggregate_hooks: false,
+        }
     }
 
     /// Set hook, which will be invoked on local list update
     pub fn set_on_update(&mut self, func: &js_sys::Function) {
-        let func = func.clone();
-        let closure: Box<dyn Fn(&list::Op) + 'static> = Box::new(move |ops: &list::Op| {
-            if let Ok(s) = serde_json::to_string(&[ops]) {
-                func.call1(&JsValue::null(), &JsValue::from(s)).ok();
-            }
-        });
-        self.0.set_on_update(closure);
+        self.on_update = Some(func.clone());
+        let buffer = Rc::clone(&self.ops_buffer);
+        self.inner.set_on_update(Box::new(move |op| {
+            buffer.as_ref().borrow_mut().push(op.clone());
+        }));
     }
 
     /// Remove on update hook
     pub fn unset_on_update(&mut self) {
-        self.0.unset_on_update()
+        self.on_update = None;
+        self.inner.unset_on_update();
+        self.ops_buffer.borrow_mut().clear();
     }
 
     /// Set hook, which will be invoked on remote update (apply)
     pub fn set_on_apply(&mut self, func: &js_sys::Function) {
-        let func = func.clone();
-        let closure: Box<dyn Fn() + 'static> = Box::new(move || {
-            func.call0(&JsValue::null()).ok();
-        });
-        self.0.set_on_apply(closure);
+        self.on_apply = Some(func.clone());
+        self.apply_call_required = true;
     }
 
     /// Unset on apply hook
     pub fn unset_on_apply(&mut self) {
-        self.0.unset_on_apply()
+        self.on_apply = None;
+        self.inner.unset_on_apply();
+        self.apply_call_required = false;
     }
 
     /// Append value to the end of the list
     pub fn append(&mut self, val: &JsValue) -> Result<(), JsError> {
-        Ok(self.0.append(jsvalue_to_value(val)?)?)
+        Ok(self
+            .inner
+            .append(jsvalue_to_value(val)?)
+            .map(|_| self.call_on_update())?)
     }
 
     /// Insert value at head of the list
     pub fn prepend(&mut self, val: &JsValue) -> Result<(), JsError> {
-        Ok(self.0.prepend(jsvalue_to_value(val)?)?)
+        Ok(self
+            .inner
+            .prepend(jsvalue_to_value(val)?)
+            .map(|_| self.call_on_update())?)
     }
 
     /// Insert values at given index
     pub fn insert(&mut self, index: usize, val: &JsValue) -> Result<(), JsError> {
-        Ok(self.0.insert(index, jsvalue_to_value(val)?)?)
+        Ok(self
+            .inner
+            .insert(index, jsvalue_to_value(val)?)
+            .map(|_| self.call_on_update())?)
     }
 
     /// Delete value at given index
     pub fn delete(&mut self, index: usize) -> Result<(), JsError> {
-        Ok(self.0.delete(index)?)
+        Ok(self.inner.delete(index).map(|_| self.call_on_update())?)
+    }
+
+    /// Apply Diff
+    ///
+    /// Passed diff expected to be JSON serialized vector of Operations
+    pub fn apply(&mut self, diff: &JsValue) -> Result<(), JsError> {
+        let s = match diff.as_string() {
+            Some(s) => s,
+            None => return Err(ListError::DiffError().into()),
+        };
+        let diff: Vec<list::Op> = match serde_json::from_str(&s) {
+            Ok(encoded) => encoded,
+            // FIXME:
+            Err(_) => return Err(ListError::DiffError().into()),
+        };
+        Ok(self.inner.apply(&diff)?)
     }
 
     /// Dump stored values into vector
     pub fn to_vec(&self) -> Result<JsValue, JsError> {
         let arr = js_sys::Array::new();
-        for value in self.0.iter() {
+        for value in self.inner.iter() {
             arr.push(&value_to_jsvalue(value)?);
         }
         Ok(arr.into())
@@ -164,7 +203,7 @@ impl List {
 
     /// Encode inner vclock into JSON
     pub fn vclock(&self) -> JsValue {
-        serde_json::to_string(self.0.vclock()).unwrap().into()
+        serde_json::to_string(self.inner.vclock()).unwrap().into()
     }
 
     /// Calculate diff and encode into JSON
@@ -179,31 +218,60 @@ impl List {
             Ok(vclock) => vclock,
             Err(_) => return Err(ListError::VClockError().into()),
         };
-        let diff = self.0.diff(&vclock);
+        let diff = self.inner.diff(&vclock);
         Ok(serde_json::to_string(&diff).unwrap().into())
-    }
-
-    /// Apply Diff
-    ///
-    /// Passed diff expected to be JSON serialized vector of Operations
-    pub fn apply(&mut self, diff: &JsValue) -> Result<(), JsError> {
-        let s = match diff.as_string() {
-            Some(s) => s,
-            None => return Err(ListError::DiffError().into()),
-        };
-        let diff: Vec<list::Op> = match serde_json::from_str(&s) {
-            Ok(encoded) => encoded,
-            // fIXME:
-            Err(_) => return Err(ListError::DiffError().into()),
-        };
-        Ok(self.0.apply(&diff)?)
     }
 
     /// Dump CRDT into serialized JSON
     pub fn dump(&self) -> Result<JsValue, JsError> {
-        serde_json::to_string(&self.0.diff(&vclock::VClock::new()))
+        serde_json::to_string(&self.inner.diff(&vclock::VClock::new()))
             .map(|s| s.into())
             .map_err(|_e| ListError::DiffError().into())
+    }
+
+    /// Set hooks aggregation into inner buffer
+    pub fn aggregate_hooks(&mut self, aggregate: bool) {
+        self.aggregate_hooks = aggregate;
+        self.call_on_update();
+        self.call_on_apply();
+    }
+
+    /// Clear operation buffer buffer items
+    fn clear_ops_buffer(&mut self) {
+        self.ops_buffer.borrow_mut().clear();
+    }
+
+    fn call_on_update(&mut self) {
+        if self.aggregate_hooks {
+            return;
+        }
+        {
+            let buffer = self.ops_buffer.borrow_mut();
+            if buffer.len() == 0 {
+                return;
+            }
+            if let Some(ref hook) = self.on_update {
+                hook.call1(
+                    &JsValue::null(),
+                    &JsValue::from(serde_json::to_string(buffer.as_slice()).unwrap()),
+                )
+                .unwrap();
+            }
+        }
+        self.clear_ops_buffer();
+    }
+
+    fn call_on_apply(&mut self) {
+        if self.aggregate_hooks {
+            return;
+        }
+        if !self.apply_call_required {
+            return;
+        }
+        if let Some(ref hook) = self.on_apply {
+            hook.call0(&JsValue::null()).unwrap();
+        };
+        self.apply_call_required = false;
     }
 }
 
