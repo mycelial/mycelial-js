@@ -16,7 +16,7 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@mycelial/wasm": "0.2.4"
+    "@mycelial/wasm": "0.2.6"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.22.0",
