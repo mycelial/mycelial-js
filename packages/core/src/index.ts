@@ -58,7 +58,7 @@ export class Instance implements Instance {
 }
 
 function withAggregate(log: Index.List, cb: () => void) {
-  log.aggregate_hooks(true);
+  log.aggregateOps(true);
   cb();
   log.aggregate_hooks(false);
 }
