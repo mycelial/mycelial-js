@@ -1,0 +1,12 @@
+{
+  "name": "@mycelial-examples/with-nodejs",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An example showing how to build it with webpack 5",
+  "keywords": [],
+  "scripts": {},
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@mycelial/core": "^0.2.5"
+  }
+}

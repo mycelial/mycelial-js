@@ -1,4 +1,5 @@
 import * as Index from '@mycelial/wasm'
+import { createCustomEvent } from './events.mjs';
 
 export type Triple = [string, string, string]
 
@@ -26,12 +27,12 @@ export class Instance implements Instance {
       setTimeout(() => {
         const ops = JSON.parse(diff)
 
-        this.events.dispatchEvent(new CustomEvent('update', { detail: ops }))
+        this.events.dispatchEvent(createCustomEvent('update', { detail: ops }))
       }, 0)
     })
     this.log.set_on_apply(() => {
       setTimeout(() => {
-        this.events.dispatchEvent(new CustomEvent('apply', { detail: {} }))
+        this.events.dispatchEvent(createCustomEvent('apply', { detail: {} }))
       }, 0)
     })
   }
