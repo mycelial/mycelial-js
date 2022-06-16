@@ -12,7 +12,7 @@ extern "C" {
     fn log(_: &str);
 }
 
-/// Aggragation state
+/// Aggregation state
 ///
 /// Helps to aggregate data from on_update / on_apply hooks
 struct AggregateState {
