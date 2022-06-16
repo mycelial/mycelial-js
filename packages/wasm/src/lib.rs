@@ -232,7 +232,8 @@ impl List {
     }
 
     /// Set hooks aggregation into inner buffer, invoke hooks when unset
-    pub fn aggregate_hooks(&mut self, aggregate: bool) {
+    #[wasm_bindgen(js_name=aggregateOps)]
+    pub fn aggregate_ops(&mut self, aggregate: bool) {
         self.aggregate_hooks = aggregate;
         if !aggregate {
             // if we switched from aggregation - call hooks immediately

@@ -41,7 +41,7 @@ export class Instance implements Instance {
   }
 
   commit(entities: Array<any>) {
-    with_aggregate(this.log, () => {
+    withAggregate(this.log, () => {
       for (const entity of entities) {
         if (entity.$id) {
           for (const [attr, value] of Object.entries(entity)) {
@@ -60,7 +60,7 @@ export class Instance implements Instance {
 function withAggregate(log: Index.List, cb: () => void) {
   log.aggregateOps(true);
   cb();
-  log.aggregate_hooks(false);
+  log.aggregateOps(false);
 }
 
 export function create(namespace: string, key: number) {
