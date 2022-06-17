@@ -4,21 +4,27 @@
   "description": "The Mycelial WASM Interface",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
-  "module": "./dist/web/index.js",
   "type": "module",
+  "module": "./dist/index.js",
+  "unpkg": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "keywords": [],
   "files": [
-    "dist/web/index_bg.wasm",
-    "dist/web/index.js",
-    "dist/web/index_bg.js",
-    "dist/web/index.d.ts"
+    "dist/index_bg.wasm",
+    "dist/index.js",
+    "dist/index_bg.js",
+    "dist/index.d.ts"
   ],
-  "scripts": {
-    "build": "npm run build:nodejs && npm run build:module && npm run build:web",
-    "build:nodejs": "wasm-pack build -d dist/nodejs --out-name index -s mycelial -t nodejs",
-    "build:module": "wasm-pack build -d dist/module --out-name index -s mycelial -t bundler",
-    "build:web": "wasm-pack build -d dist/web --out-name index -s mycelial -t web"
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./index_bg.wasm": "./dist/index_bg.wasm"
   },
-  "types": "./dist/web/index.d.ts",
+  "scripts": {
+    "build": "wasm-pack build -d dist/ --out-name index -s mycelial -t web"
+  },
   "sideEffects": false
 }

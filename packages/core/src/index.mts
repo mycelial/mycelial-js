@@ -1,5 +1,4 @@
-import initalize, { List } from '@mycelial/wasm'
-// import type { List } from '@mycelial/wasm';
+import initialize, { List } from '@mycelial/wasm'
 import { createCustomEvent } from './events.mjs';
 
 export type Triple = [string, string, string]
@@ -66,7 +65,7 @@ function withAggregate(log: List, cb: () => void) {
 }
 
 export async function create(namespace: string, key: number, opts?: any) {
-  await initalize(opts.resolver);
+  await initialize(opts?.resolver ? opts.resolver() : undefined);
 
   return new Instance(namespace, key)
 }
