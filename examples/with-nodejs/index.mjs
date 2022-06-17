@@ -1,20 +1,34 @@
 import * as Mycelial from '@mycelial/core';
+import path from 'path';
+import fs from 'fs';
+import url from 'url';
 
-const mycelial = Mycelial.create("namespace", 0);
+(async function() {
+  const mycelial = await Mycelial.create("namespace", 0, {
+    resolver: () => {
+      const module = path.join(
+        path.dirname(url.fileURLToPath(import.meta.url)),
+        'node_modules/@mycelial/wasm/dist/index_bg.wasm'
+      );
 
-mycelial.events.addEventListener('update', (evt) => {
-  console.log('update', evt);
-});
+      return fs.readFileSync(module)
+    }
+  });
 
-mycelial.events.addEventListener('apply', (evt) => {
-  console.log('apply', evt);
-});
+  mycelial.events.addEventListener('update', (evt) => {
+    console.log('update', evt);
+  });
 
-mycelial.commit([
-  {
-    $id: "id",
-    attribute: "value"
-  }
-]);
+  mycelial.events.addEventListener('apply', (evt) => {
+    console.log('apply', evt);
+  });
 
-console.log(mycelial.log.to_vec())
+  mycelial.commit([
+    {
+      $id: "id",
+      attribute: "value"
+    }
+  ]);
+
+  console.log(mycelial.log.to_vec())
+})()

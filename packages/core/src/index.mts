@@ -1,11 +1,11 @@
-import * as Index from '@mycelial/wasm'
+import initialize, { List } from '@mycelial/wasm'
 import { createCustomEvent } from './events.mjs';
 
 export type Triple = [string, string, string]
 
 export interface Instance {
   key: number
-  log: Index.List
+  log: List
   namespace: string
   events: EventTarget
 }
@@ -13,7 +13,7 @@ export interface Instance {
 export class Instance implements Instance {
   namespace: string
   key: number
-  log: Index.List
+  log: List
   events: EventTarget
 
   constructor(namespace: string, key: number) {
@@ -22,7 +22,7 @@ export class Instance implements Instance {
     this.namespace = namespace;
     this.key = key
 
-    this.log = Index.List.new(key)
+    this.log = List.new(key)
     this.log.set_on_update((diff: any) => {
       setTimeout(() => {
         const ops = JSON.parse(diff)
@@ -58,12 +58,14 @@ export class Instance implements Instance {
   }
 }
 
-function withAggregate(log: Index.List, cb: () => void) {
+function withAggregate(log: List, cb: () => void) {
   log.aggregateOps(true);
   cb();
   log.aggregateOps(false);
 }
 
-export function create(namespace: string, key: number) {
+export async function create(namespace: string, key: number, opts?: any) {
+  await initialize(opts?.resolver ? opts.resolver() : undefined);
+
   return new Instance(namespace, key)
 }

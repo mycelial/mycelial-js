@@ -9,16 +9,8 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   mode: "development",
-  module: {
-		rules: [
-			{
-				test: /\.wasm$/,
-				type: "webassembly/async"
-			},
-		]
-	},
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.wasm'],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   devServer: {
     static: path.resolve(__dirname, "dist"),
@@ -26,9 +18,6 @@ module.exports = {
 	optimization: {
 		chunkIds: "deterministic",
     usedExports: true,
-	},
-	experiments: {
-		asyncWebAssembly: true
 	},
   plugins: [
     new CopyPlugin({

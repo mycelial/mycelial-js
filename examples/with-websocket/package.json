@@ -10,7 +10,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/core": "0.2.7",
+    "@mycelial/core": "0.2.8",
     "@mycelial/websocket": "0.1.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/core",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "The Mycelial Core API engine",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -14,9 +14,9 @@
     "lint": "eslint . --ext .ts,.tsx --cache",
     "lint:fix": "npm run lint -- --fix"
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "dependencies": {
-    "@mycelial/wasm": "0.2.6"
+    "@mycelial/wasm": "0.2.8"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.22.0",

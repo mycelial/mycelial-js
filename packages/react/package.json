@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/react",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "The Mycelial React Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -18,7 +18,7 @@
     }
   },
   "dependencies": {
-    "@mycelial/core": "0.2.7",
+    "@mycelial/core": "0.2.8",
     "@mycelial/websocket": "0.1.0"
   },
   "devDependencies": {
