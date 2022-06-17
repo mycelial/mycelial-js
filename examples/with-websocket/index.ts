@@ -5,8 +5,8 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-(() => {
-  const mycelial = Mycelial.create("orders", getRandomInt(1000));
+(async () => {
+  const mycelial = await Mycelial.create("orders", getRandomInt(1000));
   const ws = Websocket.create(mycelial, {
     endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
   });

@@ -72,7 +72,7 @@ importers:
 
   examples/with-websocket:
     specifiers:
-      '@mycelial/core': 0.2.7
+      '@mycelial/core': workspace:0.2.7
       '@mycelial/websocket': 0.1.0
       copy-webpack-plugin: ^11.0.0
       ts-loader: ^9.3.0
