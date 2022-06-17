@@ -7,7 +7,7 @@
   "scripts": {},
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/core": "workspace:0.2.7",
-    "@mycelial/wasm": "workspace:^0.2.6"
+    "@mycelial/core": "0.2.8",
+    "@mycelial/wasm": "0.2.8"
   }
 }
