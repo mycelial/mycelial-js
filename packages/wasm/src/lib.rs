@@ -3,17 +3,16 @@ use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
 
-use num::rational::Ratio;
-use num::BigInt;
 use mycelial_crdt::list;
 use mycelial_crdt::vclock;
+use num::rational::Ratio;
+use num::BigInt;
 
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(_: &str);
 }
-
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -62,7 +61,6 @@ impl<T: Clone> AggregateState<T> {
         self.apply = false
     }
 }
-
 
 #[derive(Debug)]
 pub enum ListError {
@@ -338,7 +336,7 @@ macro_rules! impl_list {
                 }
             }
         }
-    }
+    };
 }
 
 impl_list!(List, list::Key<Ratio<BigInt>>);
