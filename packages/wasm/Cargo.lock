@@ -62,9 +62,9 @@ dependencies = [
 
 [[package]]
 name = "mycelial-crdt"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe2b37a4a861465a6debff6d7e888e071cead3eb66b2af722e7bc31339877378"
+checksum = "d0f3b7bef226cacf51c1db8c39a28f2f1625da778e5ff86fba50b3dfef715631"
 dependencies = [
  "num",
  "serde",
@@ -234,6 +234,7 @@ dependencies = [
  "console_error_panic_hook",
  "js-sys",
  "mycelial-crdt",
+ "num",
  "serde",
  "serde_json",
  "wasm-bindgen",
