@@ -8,7 +8,7 @@ import url from 'url';
     resolver: () => {
       const module = path.join(
         path.dirname(url.fileURLToPath(import.meta.url)),
-        'node_modules/@mycelial/wasm/dist/web/index_bg.wasm'
+        'node_modules/@mycelial/wasm/dist/index_bg.wasm'
       );
 
       return fs.readFileSync(module)

@@ -24,18 +24,22 @@ export function useInstance(namespace: string, key: number, callback: (snapshot:
   }, [])
 
   React.useEffect(() => {
-    if (!instance.current) {
-      instance.current = Mycelial.create(namespace, key)
+    const initialize = async () => {
+        if (!instance.current) {
+        instance.current = await Mycelial.create(namespace, key)
+      }
+
+      instance.current.events.addEventListener('update', handle)
+      instance.current.events.addEventListener('apply', handle)
+
+      if (!socket.current) {
+        socket.current = Websocket.create(instance.current, {
+          endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
+        });
+      }
     }
 
-    instance.current.events.addEventListener('update', handle)
-    instance.current.events.addEventListener('apply', handle)
-
-    if (!socket.current) {
-      socket.current = Websocket.create(instance.current, {
-        endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
-      });
-    }
+    initialize().catch(console.error);
 
     return () => {
       instance.current.events.addEventListener('update', handle)
