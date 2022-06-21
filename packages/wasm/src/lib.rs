@@ -104,6 +104,21 @@ impl std::fmt::Display for ListError {
 impl std::error::Error for ListError {}
 
 macro_rules! impl_list {
+    (@with_insert, $list_type:tt, $key_type:ty) => {
+        impl_list!($list_type, $key_type);
+
+        #[wasm_bindgen]
+        impl $list_type {
+            /// Insert values at given index
+            pub fn insert(&mut self, index: usize, val: &JsValue) -> Result<(), JsError> {
+                Ok(self
+                    .inner
+                    .insert(index, Self::jsvalue_to_value(val)?)
+                    .map(|()| self.call_on_update())?)
+            }
+        }
+    };
+
     ($list_type:tt, $key_type:ty) => {
         #[wasm_bindgen]
         pub struct $list_type {
@@ -172,14 +187,6 @@ macro_rules! impl_list {
                 Ok(self
                     .inner
                     .prepend(Self::jsvalue_to_value(val)?)
-                    .map(|()| self.call_on_update())?)
-            }
-
-            /// Insert values at given index
-            pub fn insert(&mut self, index: usize, val: &JsValue) -> Result<(), JsError> {
-                Ok(self
-                    .inner
-                    .insert(index, Self::jsvalue_to_value(val)?)
                     .map(|()| self.call_on_update())?)
             }
 
@@ -339,5 +346,5 @@ macro_rules! impl_list {
     };
 }
 
-impl_list!(List, list::Key<Ratio<BigInt>>);
+impl_list!(@with_insert, List, list::Key<Ratio<BigInt>>);
 impl_list!(AppendOnlyList, list::Key<i64>);

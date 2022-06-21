@@ -62,9 +62,9 @@ dependencies = [
 
 [[package]]
 name = "mycelial-crdt"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0f3b7bef226cacf51c1db8c39a28f2f1625da778e5ff86fba50b3dfef715631"
+checksum = "2aa471a4079c04c739db8399d416aa94529626e4ecf18656ff4898a071d5f71a"
 dependencies = [
  "num",
  "serde",
