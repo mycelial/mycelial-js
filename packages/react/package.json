@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/react",
-  "version": "0.1.4",
+  "version": "0.2.9-canary.3",
   "description": "The Mycelial React Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -12,14 +12,17 @@
     "dist"
   ],
   "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.js"
     }
   },
   "dependencies": {
-    "@mycelial/core": "0.2.8",
-    "@mycelial/websocket": "0.1.0"
+    "@mycelial/core": "0.2.9-canary.3",
+    "@mycelial/v0": "0.2.9-canary.3",
+    "@mycelial/websocket": "0.2.9-canary.3"
   },
   "devDependencies": {
     "@types/lodash.isequal": "^4.5.6",

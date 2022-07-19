@@ -10,8 +10,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/core": "0.2.8",
-    "@mycelial/websocket": "0.1.0"
+    "@mycelial/core": "0.2.9-canary.1",
+    "@mycelial/websocket": "0.2.9-canary.1"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",

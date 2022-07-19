@@ -10,19 +10,27 @@ export interface Instance {
   events: EventTarget
 }
 
+const MAX_PEER_ID = 1000 * 1000 * 1000;
+
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
 export class Instance implements Instance {
   namespace: string
   key: number
   log: List
   events: EventTarget
+  runtime: any
 
-  constructor(namespace: string, key: number) {
+  constructor(namespace: string, runtime?: any) {
     this.events = new EventTarget();
 
     this.namespace = namespace;
-    this.key = key
+    this.key = getRandomInt(MAX_PEER_ID)
+    this.runtime = runtime || {}
 
-    this.log = List.new(key)
+    this.log = List.new(this.key)
     this.log.set_on_update((diff: any) => {
       setTimeout(() => {
         const ops = JSON.parse(diff)
@@ -64,8 +72,8 @@ function withAggregate(log: List, cb: () => void) {
   log.aggregateOps(false);
 }
 
-export async function create(namespace: string, key: number, opts?: any) {
+export async function create(namespace: string, opts?: any) {
   await initialize(opts?.resolver ? opts.resolver() : undefined);
 
-  return new Instance(namespace, key)
+  return new Instance(namespace, opts.runtime)
 }

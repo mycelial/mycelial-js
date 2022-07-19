@@ -1,7 +1,7 @@
 {
-  "name": "@mycelial/websocket",
+  "name": "@mycelial/web",
   "version": "0.2.9-canary.3",
-  "description": "The Mycelial Websocket Relay Adapter",
+  "description": "Web API specific implementation",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
   "type": "module",
@@ -18,13 +18,12 @@
     }
   },
   "dependencies": {
-    "lodash.isequal": "^4.5.0"
+    "@mycelial/core": "0.2.9-canary.3",
+    "@mycelial/wasm": "0.2.9-canary.3"
   },
   "devDependencies": {
-    "@types/lodash.isequal": "^4.5.6",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
-    "bunchee": "1.8.3",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "tslib": "^2.4.0",
