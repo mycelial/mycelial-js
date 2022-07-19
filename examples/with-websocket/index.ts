@@ -1,12 +1,8 @@
 import * as Mycelial from '@mycelial/core';
 import * as Websocket from '@mycelial/websocket';
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
 (async () => {
-  const mycelial = await Mycelial.create("orders", getRandomInt(1000));
+  const mycelial = await Mycelial.create("orders");
   const ws = Websocket.create(mycelial, {
     endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
   });
