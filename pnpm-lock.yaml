@@ -15,7 +15,7 @@ importers:
       '@mycelial/core': 0.2.8
       '@mycelial/wasm': 0.2.8
     dependencies:
-      '@mycelial/core': link:../../packages/core
+      '@mycelial/core': 0.2.8
       '@mycelial/wasm': link:../../packages/wasm
 
   examples/with-react:
@@ -48,6 +48,16 @@ importers:
       typescript: 4.7.3
       web-vitals: 2.1.4
 
+  examples/with-store:
+    specifiers:
+      '@mycelial/core': 0.2.8
+      '@mycelial/v0': 0.1.0
+      '@mycelial/wasm': 0.2.8
+    dependencies:
+      '@mycelial/core': 0.2.8
+      '@mycelial/v0': link:../../packages/v0
+      '@mycelial/wasm': link:../../packages/wasm
+
   examples/with-webpack:
     specifiers:
       '@mycelial/core': 0.2.8
@@ -58,7 +68,7 @@ importers:
       webpack-cli: ^4.9.2
       webpack-dev-server: ^4.9.0
     dependencies:
-      '@mycelial/core': link:../../packages/core
+      '@mycelial/core': 0.2.8
     devDependencies:
       copy-webpack-plugin: 11.0.0_webpack@5.72.1
       ts-loader: 9.3.0_typescript@4.5.5+webpack@5.72.1
@@ -78,7 +88,7 @@ importers:
       webpack-cli: ^4.9.2
       webpack-dev-server: ^4.9.0
     dependencies:
-      '@mycelial/core': link:../../packages/core
+      '@mycelial/core': 0.2.8
       '@mycelial/websocket': link:../../packages/websocket
     devDependencies:
       copy-webpack-plugin: 11.0.0_webpack@5.72.1
@@ -109,7 +119,7 @@ importers:
 
   packages/react:
     specifiers:
-      '@mycelial/core': 0.2.8
+      '@mycelial/core': workspace:0.2.9-canary.0
       '@mycelial/websocket': 0.1.0
       '@types/lodash.isequal': ^4.5.6
       '@typescript-eslint/eslint-plugin': ^5.22.0
@@ -131,6 +141,25 @@ importers:
       eslint-config-prettier: 8.5.0_eslint@8.14.0
       tslib: 2.4.0
       typescript: 4.7.1-rc
+
+  packages/v0:
+    specifiers:
+      '@mycelial/core': 0.2.8
+      '@typescript-eslint/eslint-plugin': ^5.22.0
+      '@typescript-eslint/parser': ^5.22.0
+      eslint: ^8.14.0
+      eslint-config-prettier: ^8.5.0
+      tslib: ^2.4.0
+      typescript: 4.7.3
+    dependencies:
+      '@mycelial/core': 0.2.8
+    devDependencies:
+      '@typescript-eslint/eslint-plugin': 5.22.0_d5e2456eef29dd5e95fb88e5d8eeaa4a
+      '@typescript-eslint/parser': 5.22.0_eslint@8.14.0+typescript@4.7.3
+      eslint: 8.14.0
+      eslint-config-prettier: 8.5.0_eslint@8.14.0
+      tslib: 2.4.0
+      typescript: 4.7.3
 
   packages/wasm:
     specifiers: {}
@@ -1870,6 +1899,16 @@ packages:
 
   /@leichtgewicht/ip-codec/2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
+
+  /@mycelial/core/0.2.8:
+    resolution: {integrity: sha512-ACWAACpDWGFW7N2TE+omUvUOX2UH53vaq8292Tv/XhVkoJcDY+70zns3jHGYTOccj3biN+cLO6aJTYCcC76Lhw==}
+    dependencies:
+      '@mycelial/wasm': 0.2.8
+    dev: false
+
+  /@mycelial/wasm/0.2.8:
+    resolution: {integrity: sha512-tJ7KxCb09QDoU7pQRtE9xs3Mi01XkZ73emKf+4sWKRERqwZ7u3iW48L+pf/keT9azblFC8T6GVbhogHGnaV9cQ==}
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
