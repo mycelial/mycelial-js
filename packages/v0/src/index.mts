@@ -37,7 +37,7 @@ class Index {
     this.data = new Map<Id, Entity>()
   }
 
-  add(entity: Entity) {
+  add(entity: Entity): [Property[], Entity] {
     const e = entity.clear()
     this.data.set(entity.id, e)
 
@@ -104,6 +104,12 @@ class Property {
 
   get hash() {
     return [this.id, this.attribute[0], this.attribute[1], this.value].join('/')
+  }
+
+  *[Symbol.iterator]() {
+    for (const c of this.data) {
+      yield c
+    }
   }
 }
 
@@ -199,9 +205,11 @@ function withIndex<T>(log: Array<[Id, any, any]>, index: T) {
 export class Store {
   instance: Instance;
   index: Index;
+  events: EventTarget;
 
   constructor(instance: Instance) {
     this.index = new Index();
+    this.events = new EventTarget();
     this.instance = instance;
     this.instance.events.addEventListener('update', this.handleChange);
     this.instance.events.addEventListener('apply', this.handleChange);
@@ -209,14 +217,16 @@ export class Store {
 
   handleChange = (evt: any) => {
     this.index = withIndex(this.instance.log.to_vec(), this.index)
-    
-    // this.events.dispatchEvent(createCustomEvent('change', { }));
+
+    this.events.dispatchEvent(createCustomEvent('change', { detail: {} }))
   }
 
   add(entity: Entity) {
     const [ changeset, e ] = this.index.add(entity)
 
-    // todo: send the changeset off
+    for (const property of changeset) {
+      this.instance.log.append(Array.from(property))
+    }
 
     return e
   }
