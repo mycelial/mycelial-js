@@ -121,7 +121,7 @@ function* flattenTraits(eid: Id, traits: {[key: string]: any}) {
   }
 }
 
-class Entity {
+export class Entity {
   id: Id;
   props: Map<string, Property>;
   changeset: Property[];
@@ -198,7 +198,9 @@ function withIndex<T>(log: Array<[Id, any, any]>, index: T) {
     const prop = new Property(record)
     const entity = index.get(prop.id) || new Entity(prop.id);
 
-    return index.add(entity.add(prop));
+    index.add(entity.add(prop));
+
+    return index;
   }, index)
 }
 

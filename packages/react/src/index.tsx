@@ -1,17 +1,46 @@
 import React from 'react';
 import * as Mycelial from '@mycelial/core';
 import * as Websocket from '@mycelial/websocket';
-import { Store } from '@mycelial/v0';
+import { Store, Entity } from '@mycelial/v0';
 
+export { Store, Entity } from '@mycelial/v0';
 
-export const MycelialContext = React.createContext<Mycelial.Instance | null>(null)
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
 
-export function useStore(callback: (a: Store) => void, args: any) {
-  const instance = React.useContext(MycelialContext)
+const Context = React.createContext<any>({})
 
-  if (instance === null) {
-    return;
+type Props = {
+  namespace: string,
+  opts?: {
+    resolver: (meta: ImportMeta) => any
   }
+  children: any
+}
+
+export function Provider(props: Props) {
+  const [state, setState] = React.useState<{instance?: Mycelial.Instance}>({})
+
+  React.useEffect(() => {
+    Mycelial.create(props.namespace, getRandomInt(1000000000), props?.opts).then((instance) => {
+      setState({ instance });
+    })
+  }, [props.namespace])
+
+  if (!state.instance) {
+    return <></>
+  }
+
+  return (
+    <Context.Provider value={state.instance}>
+      {props.children}
+    </Context.Provider>
+  )
+}
+
+export function useStore(callback: (a: Store) => void, args: any = []): { add: (e: Entity) => void} {
+  const instance = React.useContext(Context)
 
   const store = React.useRef<Store>()
 
@@ -21,10 +50,24 @@ export function useStore(callback: (a: Store) => void, args: any) {
     }
   }, args)
 
+  const add = React.useCallback((entity: Entity) => {
+    if (store.current) {
+      store.current.add(entity)
+    }
+  }, args)
+
   React.useEffect(() => {
     store.current = new Store(instance)
     store.current.events.addEventListener('change', handle)
+
+    return () => {
+      store.current?.events.removeEventListener('change', handle)
+    }
   }, args)
+
+  return {
+    add,
+  }
 }
 
 export function useInstance(namespace: string, key: number, callback: (snapshot: Array<any>) => void) {
