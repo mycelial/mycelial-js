@@ -2,99 +2,244 @@
 import { createCustomEvent } from './events.mjs';
 import type { Instance } from '@mycelial/core';
 
-function getEntities(entities: any, log: Array<any>) {
-  return log.reduce((acc, [e, a, v]) => {
-    const [namespace, trait] = a.split('/')
+type Id = string | number;
 
-    const ents = acc.entities;
+class QuerySet<T> {
+  dataset: Array<T>;
 
-    if (!ents[e]) {
-      ents[e] = {};
+  constructor(dataset: Array<T>) {
+    this.dataset = dataset
+  }
+
+  map(fn: (e: T) => T): QuerySet<T> {
+    return new QuerySet(this.dataset.map(fn))
+  }
+
+  filter(fn: (e: T) => T): QuerySet<T> {
+    return new QuerySet(this.dataset.filter(fn))
+  }
+
+  reduce<A>(fn: (acc: A, e: T) => A, acc: A) {
+    return this.dataset.reduce(fn, acc)
+  }
+
+  *[Symbol.iterator]() {
+    for (const e of this.dataset) {
+      yield e
     }
-
-    const entity = ents[e];
-
-    if (!entity[namespace]) {
-      entity[namespace] = {}
-    }
-
-    const ns = entity[namespace]
-    ns[trait] = v
-
-    return acc;
-  }, {
-    entities
-  });
+  }
 }
 
-export class Store {
-  instance;
-  entities: any;
-  events: EventTarget;
+class Index {
+  data: Map<Id, Entity>;
 
-  constructor(instance: Instance) {
-    this.entities = {};
-    this.instance = instance;
-    this.instance.events.addEventListener('update', this.handleChange);
-    this.instance.events.addEventListener('apply', this.handleChange);
-
-    this.events = new EventTarget();
+  constructor() {
+    this.data = new Map<Id, Entity>()
   }
 
-  handleChange = (evt: any) => {
-    const idx = getEntities(this.entities, this.instance.log.to_vec());
+  add(entity: Entity) {
+    const e = entity.clear()
+    this.data.set(entity.id, e)
 
-    this.entities = idx.entities;
-
-    this.events.dispatchEvent(createCustomEvent('change', { }));
+    return [entity.changeset, e];
   }
 
-  get(key: string) {
-    return (this.entities || {})[key]
+  get(key: Id): Entity | undefined {
+    return this.data.get(key)
   }
 
-  subscribe(callback: (store: Store) => void){
-    const handler = () => callback(this);
+  map(fn: (e: Entity) => Entity): Array<Entity> {
+    return Array.from(this).map(fn)
+  }
 
-    this.events.addEventListener('change', handler);
+  filter(fn: (e: Entity) => Boolean): Array<Entity> {
+    return Array.from(this).filter(fn)
+  }
 
-    return () => {
-      this.events.removeEventListener('change', handler);
+  find(fn: (e: Entity) => Boolean) {
+    return Array.from(this).find(fn)
+  }
+
+  reduce<A>(fn: (acc: A, e: Entity) => A, acc: A) {
+    return Array.from(this).reduce(fn, acc)
+  }
+
+  *[Symbol.iterator]() {
+    for (const e of this.data.values()) {
+      yield e
     }
   }
+}
 
-  set(key: string, data: any) {
-    this.instance.log.aggregateOps(true);
+class Property {
+  data: [Id, any, any];
 
-    for (const namespace of Object.keys(data)) {
-      const traits = data[namespace];
+  constructor(data: [Id, any, any]) {
+    this.data = data
+  }
 
-      for (const trait of Object.keys(traits)) {
-        const value = traits[trait];
+  get id() {
+    return this.data[0]
+  }
 
-        if (!this.entities[key]) {
-          this.entities[key] = {}
+  get attribute() {
+    return this.data[1]
+  }
+
+  get value() {
+    return this.data[2]
+  }
+
+  get namespace() {
+    return this.attribute[0]
+  }
+
+  get key() {
+    return this.attribute[1]
+  }
+
+  get path() {
+    return this.attribute.join('/')
+  }
+
+  get hash() {
+    return [this.id, this.attribute[0], this.attribute[1], this.value].join('/')
+  }
+}
+
+function* flattenTraits(eid: Id, traits: {[key: string]: any}) {
+  for (const [namespace, trait] of Object.entries(traits)) {
+    for (const [key, value] of Object.entries(trait)) {
+      yield new Property([eid, [namespace, key], value])
+    }
+  }
+}
+
+class Entity {
+  id: Id;
+  props: Map<string, Property>;
+  changeset: Property[];
+  cache: Object;
+
+  constructor(id: Id, props?: Map<string, Property>, changeset?: Property[]) {
+    this.id = id
+    this.props = props || new Map()
+    this.changeset = changeset || []
+    this.cache = {}
+  }
+
+  static from(id: Id, obj: any) {
+    return (new Entity(id)).update(obj)
+  }
+
+  add(prop: Property): Entity {
+    const props = new Map(this.props)
+    props.set(prop.path, prop)
+
+    return new Entity(this.id, props, this.changeset)
+  }
+
+  update(traits: Object): Entity {
+    const log = Array.from(flattenTraits(this.id, traits))
+    const changeset = [ ...this.changeset ]
+
+    const props = new Map(this.props)
+
+    for (const prop of log) {
+      if (props.has(prop.path)) {
+        const current = props.get(prop.path)
+
+        if (current?.hash !== prop.hash) {
+          props.set(prop.path, prop)
+          changeset.push(prop)
         }
-
-        const entity = this.entities[key];
-
-        if (!entity[namespace]) {
-          entity[namespace] = {};
-        }
-
-        const ns = entity[namespace];
-        ns[trait] = value;
-
-        this.entities[key] = entity;
-
-        this.instance.log.append([
-          key,
-          [namespace, trait].join('/'),
-          value
-        ])
+      } else {
+        props.set(prop.path, prop)
+        changeset.push(prop)
       }
     }
 
-    this.instance.log.aggregateOps(false);
+    return new Entity(this.id, props, changeset)
+  }
+
+  clear(): Entity {
+    return new Entity(this.id, this.props)
+  }
+
+  get properties() {
+    if (Object.isFrozen(this.cache)) {
+      return this.cache
+    }
+
+    const props: { [key: string]: { [key: string]: string | number }} = {};
+    for (const prop of this.props.values()) {
+      const namespace = props[prop.namespace] || {}
+      namespace[prop.key] = prop.value
+
+      props[prop.namespace] = namespace
+    }
+
+    const nextProps = Object.assign(this.cache, props)
+
+    Object.freeze(this.cache)
+
+    return nextProps
+  }
+}
+
+function withIndex<T>(log: Array<[Id, any, any]>, index: T) {
+  return log.reduce<T>((index: any, record) => {
+    const prop = new Property(record)
+    const entity = index.get(prop.id) || new Entity(prop.id);
+
+    return index.add(entity.add(prop));
+  }, index)
+}
+
+export class Store {
+  instance: Instance;
+  index: Index;
+
+  constructor(instance: Instance) {
+    this.index = new Index();
+    this.instance = instance;
+    this.instance.events.addEventListener('update', this.handleChange);
+    this.instance.events.addEventListener('apply', this.handleChange);
+  }
+
+  handleChange = (evt: any) => {
+    this.index = withIndex(this.instance.log.to_vec(), this.index)
+    
+    // this.events.dispatchEvent(createCustomEvent('change', { }));
+  }
+
+  add(entity: Entity) {
+    const [ changeset, e ] = this.index.add(entity)
+
+    // todo: send the changeset off
+
+    return e
+  }
+
+  map(fn: (e: Entity) => Entity) {
+    return new QuerySet(this.index.map(fn));
+  }
+
+  filter(fn: (e: Entity) => Boolean) {
+    return new QuerySet(this.index.filter(fn));
+  }
+
+  find(fn: (e: Entity) => Boolean) {
+    return this.index.find(fn);
+  }
+
+  reduce<A>(fn: (a: A, e: Entity) => A, acc: A) {
+    return this.index.reduce(fn, acc);
+  }
+
+  *[Symbol.iterator]() {
+    for (const e of this.index) {
+      yield e
+    }
   }
 }
