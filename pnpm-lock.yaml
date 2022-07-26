@@ -56,10 +56,12 @@ importers:
   examples/with-store:
     specifiers:
       '@mycelial/core': 0.2.8
+      '@mycelial/nodejs': workspace:^0.1.0
       '@mycelial/v0': 0.1.0
       '@mycelial/wasm': 0.2.8
     dependencies:
       '@mycelial/core': 0.2.8
+      '@mycelial/nodejs': link:../../packages/nodejs
       '@mycelial/v0': link:../../packages/v0
       '@mycelial/wasm': link:../../packages/wasm
 

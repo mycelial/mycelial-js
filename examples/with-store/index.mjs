@@ -1,63 +1,79 @@
 import * as Mycelial from '@mycelial/core';
-import { Store } from '@mycelial/v0';
-import path from 'path';
-import fs from 'fs';
-import url from 'url';
+import { Store, Entity } from '@mycelial/v0';
+import { resolve } from '@mycelial/nodejs';
 
 (async function() {
   const instance = await Mycelial.create("namespace", 0, {
-    resolver: () => {
-      const module = path.join(
-        path.dirname(url.fileURLToPath(import.meta.url)),
-        'node_modules/@mycelial/wasm/dist/index_bg.wasm'
-      );
-
-      return fs.readFileSync(module)
-    }
+    resolver: resolve(import.meta)
   });
 
   const store = new Store(instance);
 
-  const unsubscribe = store.subscribe((store) => {
-    console.log('Entities', store.get('art'));
-  });
-
-  store.set("userid", {
-    user: {
-      name: 'username'
+  // Add a new project entity
+  store.add(Entity.from("project-1", {
+    entity: {
+      kind: "project"
     },
-    order: {
-      total: 10
+    project: {
+      id: "project-1",
+      name: "Mycelial"
     }
-  })
+  }))
 
-  console.log(store.get("userid"));
-  
-  store.set("42", {
-    order: {
-      id: "42",
+  // Add a new todo item with a reference to the project created above
+  store.add(Entity.from("item-0", {
+    entity: {
+      kind: "item"
+    },
+    todo: {
+      title: "A todo item"
+    },
+    project: {
+      id: "project-1"
     }
-  })
+  }))
 
-  console.log(store.get("42"))
+  // Time to list the projects
+  const projects = store.filter((e) => e.properties.entity.kind === "project")
 
-  store.set("24", {
-    order: {
-      itemId: "24",
+  for (const project of projects) {
+    console.log(project.properties.project.name)
+
+    // And here we list all the project items
+    const items = store.filter((item) => {
+      const props = item.properties;
+      return (props.entity.kind === "item") && (props.project.id === project.id)
+    })
+
+    for (const { properties } of items) {
+      console.log(properties.todo.title, properties)
     }
-  })
+  }
 
-  console.log(store.get("24"))
-  
+  // We realized we missed the todo item id, let's add it
+  let item = store.find((e) => e.id === "item-0")
+  store.add(item.update({
+    todo: {
+      id: "a-todo-item"
+    }
+  }))
+
+  // Now we can see the todo entity has the todo id set
+
+  for (const project of projects) {
+    console.log(project.properties.project.name)
+
+    const items = store.filter((item) => {
+      const props = item.properties;
+      return (props.entity.kind === "item") && (props.project.id === project.id)
+    })
+
+    for (const { properties } of items) {
+      console.log(properties.todo.title, properties)
+    }
+  }
+
   setInterval(() => {
     console.log('The timer keeps the process running');
   }, 1000 * 60 * 60);
-
-  setTimeout(() => {
-    store.set("userid", {
-      user: {
-        email: "example@mycelial.com"
-      }
-    })
-  }, 5000);
 })()

@@ -8,7 +8,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@mycelial/core": "0.2.8",
-    "@mycelial/wasm": "0.2.8",
-    "@mycelial/v0": "0.1.0"
+    "@mycelial/nodejs": "workspace:^0.1.0",
+    "@mycelial/v0": "0.1.0",
+    "@mycelial/wasm": "0.2.8"
   }
 }
