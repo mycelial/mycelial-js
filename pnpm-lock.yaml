@@ -120,6 +120,7 @@ importers:
   packages/react:
     specifiers:
       '@mycelial/core': workspace:0.2.9-canary.0
+      '@mycelial/v0': workspace:0.1.0
       '@mycelial/websocket': 0.1.0
       '@types/lodash.isequal': ^4.5.6
       '@typescript-eslint/eslint-plugin': ^5.22.0
@@ -131,6 +132,7 @@ importers:
       typescript: ~4.7.1-rc
     dependencies:
       '@mycelial/core': link:../core
+      '@mycelial/v0': link:../v0
       '@mycelial/websocket': link:../websocket
     devDependencies:
       '@types/lodash.isequal': 4.5.6

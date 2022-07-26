@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@mycelial/core": "workspace:0.2.9-canary.0",
+    "@mycelial/v0": "workspace:0.1.0",
     "@mycelial/websocket": "0.1.0"
   },
   "devDependencies": {

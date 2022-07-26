@@ -1,6 +1,31 @@
 import React from 'react';
 import * as Mycelial from '@mycelial/core';
 import * as Websocket from '@mycelial/websocket';
+import { Store } from '@mycelial/v0';
+
+
+export const MycelialContext = React.createContext<Mycelial.Instance | null>(null)
+
+export function useStore(callback: (a: Store) => void, args: any) {
+  const instance = React.useContext(MycelialContext)
+
+  if (instance === null) {
+    return;
+  }
+
+  const store = React.useRef<Store>()
+
+  const handle = React.useCallback(() => {
+    if (store.current) {
+      callback(store.current)
+    }
+  }, args)
+
+  React.useEffect(() => {
+    store.current = new Store(instance)
+    store.current.events.addEventListener('change', handle)
+  }, args)
+}
 
 export function useInstance(namespace: string, key: number, callback: (snapshot: Array<any>) => void) {
   const instance = React.useRef<any>();
