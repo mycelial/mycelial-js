@@ -13,9 +13,11 @@ importers:
   examples/with-nodejs:
     specifiers:
       '@mycelial/core': 0.2.8
+      '@mycelial/nodejs': workspace:^0.1.0
       '@mycelial/wasm': 0.2.8
     dependencies:
       '@mycelial/core': 0.2.8
+      '@mycelial/nodejs': link:../../packages/nodejs
       '@mycelial/wasm': link:../../packages/wasm
 
   examples/with-react:

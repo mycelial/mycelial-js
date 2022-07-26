@@ -1,0 +1,30 @@
+{
+  "name": "@mycelial/nodejs",
+  "version": "0.1.0",
+  "description": "NodeJS specific implementation",
+  "license": "Apache-2.0",
+  "author": "Mycelial <hello@mycelial.com>",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "tslib": "^2.4.0",
+    "typescript": "~4.7.1-rc"
+  }
+}

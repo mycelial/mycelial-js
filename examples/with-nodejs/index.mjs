@@ -1,18 +1,9 @@
 import * as Mycelial from '@mycelial/core';
-import path from 'path';
-import fs from 'fs';
-import url from 'url';
+import { resolve } from '@mycelial/nodejs';
 
 (async function() {
   const mycelial = await Mycelial.create("namespace", 0, {
-    resolver: () => {
-      const module = path.join(
-        path.dirname(url.fileURLToPath(import.meta.url)),
-        'node_modules/@mycelial/wasm/dist/index_bg.wasm'
-      );
-
-      return fs.readFileSync(module)
-    }
+    resolver: resolve(import.meta)
   });
 
   mycelial.events.addEventListener('update', (evt) => {
