@@ -4,7 +4,8 @@
     "outDir": "./dist",
     "lib": ["es2020", "dom"],
     "target": "es2020",
-    "jsx": "react",
+    "module": "es2020",
+
     "strict": true,
     "alwaysStrict": true,
     "strictNullChecks": true,

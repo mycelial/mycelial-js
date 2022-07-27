@@ -11,7 +11,8 @@ function asMessage(instance: any, kind: string, payload: string) {
 }
 
 export function create(instance: any, opts: any) {
-  const socket = new WebSocket(opts.endpoint);
+  const WebSocketClass = instance.runtime.getWebSocket()
+  const socket = new WebSocketClass(opts.endpoint);
 
   const handleUpdate = (evt: any) => {
     if (socket.readyState !== 1) {
@@ -25,7 +26,7 @@ export function create(instance: any, opts: any) {
 
   instance.events.addEventListener('update', handleUpdate);
 
-  socket.addEventListener('open', (evt) => {
+  socket.addEventListener('open', (evt: any) => {
     socket.send(asMessage(instance, 'sync', instance.log.vclock()));
   });
 
@@ -54,7 +55,7 @@ export function create(instance: any, opts: any) {
     }
   }
 
-  socket.addEventListener('message', (evt) => {
+  socket.onmessage = (evt: any) => {
     const message = JSON.parse(evt.data);
 
     switch (message.kind) {
@@ -67,15 +68,15 @@ export function create(instance: any, opts: any) {
       default:
         console.warn('Unknown message kind, no handler implemented', message)
     }
-  });
+  }
 
-  socket.addEventListener('close', (evt) => {
+  socket.onclose = (evt: any) => {
     console.warn('Connection closed', evt)
-  })
+  }
 
-  socket.addEventListener('error', (evt) => {
+  socket.onerror = (evt: any) => {
     console.error('Error', evt)
-  })
+  }
 
   return () => {
     instance.events.removeEventListener('update', handleUpdate);

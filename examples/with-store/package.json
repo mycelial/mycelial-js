@@ -1,5 +1,5 @@
 {
-  "name": "@mycelial-examples/with-nodejs",
+  "name": "@mycelial-examples/with-store",
   "private": true,
   "version": "0.1.0",
   "description": "An example showing how to build it with webpack 5",
@@ -7,6 +7,7 @@
   "scripts": {},
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/nodejs": "workspace:^0.1.0"
+    "@mycelial/nodejs": "workspace:^0.1.0",
+    "@mycelial/v0": "0.1.0"
   }
 }

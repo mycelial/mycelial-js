@@ -1,36 +1,34 @@
 import React from 'react';
 import * as Mycelial from '@mycelial/react';
+import * as Web from '@mycelial/web';
 
 import logo from './logo.svg';
 import './App.css';
 
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
+function App() {
+  return (
+    <Mycelial.Provider runtime={Web} namespace='users'>
+      <Content />
+    </Mycelial.Provider>
+  )
 }
 
-function App() {
-  const [state, setState] = React.useState<any>({
-    snapshot: [],
-  });
+function Content() {
+  const [state, setState] = React.useState<any>({});
 
-  const { commit } = Mycelial.useInstance("orders", getRandomInt(1000), (snapshot: any) => {
-    setState({ ...state, snapshot })
-  })
+  const { add } = Mycelial.useStore((store: Mycelial.Store) => {
+    const hooman = store.find((e: Mycelial.Entity) => e.id === "hooman")
+    setState({ hooman })
+  }, [])
 
   const handleClick = () => {
-    commit([
-      {
-        $id: "100500",
+    add(Mycelial.Entity.from("hooman", {
+      human: {
+        id: "foo",
         name: "Hooman Name",
         email: "hooman@example.com"
-      },
-
-      {
-        $id: "100501",
-        name: "Person Name",
-        email: "person@example.com"
       }
-    ])
+    }))
   }
 
   return (
@@ -39,7 +37,7 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <button onClick={handleClick}>Add</button>
         <code>
-          <pre>{JSON.stringify(state.snapshot, null, '    ')}</pre>
+          <pre>{JSON.stringify(state.hooman?.properties, null, '    ')}</pre>
         </code>
       </header>
     </div>
