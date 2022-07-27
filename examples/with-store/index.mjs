@@ -11,9 +11,7 @@ import { resolve } from '@mycelial/nodejs';
 
   // Add a new project entity
   store.add(Entity.from("project-1", {
-    // entity: {
     kind: "project",
-    //},
     project: {
       id: "project-1",
       name: "Mycelial"
@@ -22,16 +20,11 @@ import { resolve } from '@mycelial/nodejs';
 
   // Add a new todo item with a reference to the project created above
   store.add(Entity.from("item-0", {
-    // entity: {
     kind: "item",
-    //},
     todo: {
       title: "A todo item",
       projectId: "project-1"
-    },
-    /*project: {
-      id: "project-1"
-    }*/
+    }
   }))
 
   // Time to list the projects
