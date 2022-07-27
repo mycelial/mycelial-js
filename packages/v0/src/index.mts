@@ -1,4 +1,3 @@
-
 import { createCustomEvent } from './events.mjs';
 import type { Instance } from '@mycelial/core';
 
