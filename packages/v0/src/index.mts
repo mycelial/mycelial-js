@@ -115,10 +115,27 @@ class Property {
 
 function* flattenTraits(eid: Id, traits: {[key: string]: any}) {
   for (const [namespace, trait] of Object.entries(traits)) {
-    for (const [key, value] of Object.entries(trait)) {
-      yield new Property([eid, [namespace, key], value])
+    if (typeof trait === 'object') {
+      for (const [key, value] of Object.entries(trait)) {
+        yield new Property([eid, [namespace, key], value])
+      }
+    }
+    
+  }
+}
+
+function flattenObject(eid: Id, obj: any, parent?: string[], res: Property[] = []){
+  for(let key in obj){
+    let propName = parent ? parent.concat([ key ]) : [ key ];
+    if(typeof obj[key] == 'object'){
+      res = flattenObject(eid, obj[key], propName, res);
+    } else {
+      res = res.concat([
+        new Property([ eid, propName, obj[key] ])
+      ]);
     }
   }
+  return res;
 }
 
 export class Entity {
@@ -146,7 +163,8 @@ export class Entity {
   }
 
   update(traits: Object): Entity {
-    const log = Array.from(flattenTraits(this.id, traits))
+    const log = flattenObject(this.id, traits)
+    console.log('UPDATE', log)
     const changeset = [ ...this.changeset ]
 
     const props = new Map(this.props)
@@ -177,12 +195,34 @@ export class Entity {
       return this.cache
     }
 
-    const props: { [key: string]: { [key: string]: string | number }} = {};
+    const props: any = {};
     for (const prop of this.props.values()) {
-      const namespace = props[prop.namespace] || {}
+      if (Array.isArray(prop.attribute)) {
+        let target = props;
+        let idx = 0;
+
+        for (const token of prop.attribute) {
+          ++idx;
+
+          if (prop.attribute.length === idx) {
+            target[token] = prop.value;
+          } else {
+            target[token] = target[token] || {}
+            target = target[token]
+          }
+
+          console.log('isArray', token, target)
+        }
+      } else {
+        props[prop.attribute] = prop.value
+      }
+
+      console.log(props)
+
+      /*const namespace = props[prop.namespace] || {}
       namespace[prop.key] = prop.value
 
-      props[prop.namespace] = namespace
+      props[prop.namespace] = namespace*/
     }
 
     const nextProps = Object.assign(this.cache, props)

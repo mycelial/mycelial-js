@@ -23,6 +23,7 @@ function Content() {
   const handleClick = () => {
     add(Mycelial.Entity.from("hooman", {
       human: {
+        id: "foo",
         name: "Hooman Name",
         email: "hooman@example.com"
       }

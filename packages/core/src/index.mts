@@ -15,12 +15,14 @@ export class Instance implements Instance {
   key: number
   log: List
   events: EventTarget
+  runtime: any
 
-  constructor(namespace: string, key: number) {
+  constructor(namespace: string, key: number, runtime?: any) {
     this.events = new EventTarget();
 
     this.namespace = namespace;
     this.key = key
+    this.runtime = runtime || {}
 
     this.log = List.new(key)
     this.log.set_on_update((diff: any) => {
@@ -67,5 +69,5 @@ function withAggregate(log: List, cb: () => void) {
 export async function create(namespace: string, key: number, opts?: any) {
   await initialize(opts?.resolver ? opts.resolver() : undefined);
 
-  return new Instance(namespace, key)
+  return new Instance(namespace, key, opts.runtime)
 }

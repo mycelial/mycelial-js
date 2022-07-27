@@ -2,6 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import url from 'url';
 
+import WebSocket from 'isomorphic-ws';
+
 export function resolve(meta: ImportMeta) {
   return () => {
     const module = path.join(
@@ -11,4 +13,8 @@ export function resolve(meta: ImportMeta) {
 
     return fs.readFileSync(module)
   }
+}
+
+export function getWebSocket() {
+  return WebSocket
 }
