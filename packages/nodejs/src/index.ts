@@ -1,18 +1,13 @@
-import path from 'path';
 import fs from 'fs';
-import url from 'url';
+import * as resolver from 'import-meta-resolve';
 import * as Core from '@mycelial/core';
 
 import WebSocket from 'isomorphic-ws';
 
 export function resolve() {
-  return () => {
-    const module = path.join(
-      path.dirname(url.fileURLToPath(import.meta.url)),
-      '../node_modules/@mycelial/wasm/dist/index_bg.wasm'
-    );
-
-    return fs.readFileSync(module)
+  return async (): Promise<any> => {
+    const mod = await resolver.resolve('@mycelial/wasm/index_bg.wasm', import.meta.url)
+    return fs.readFileSync(new URL(mod))
   }
 }
 
@@ -22,7 +17,7 @@ export function getWebSocket() {
 
 export async function create(namespace: string, key: any) {
   return Core.create(namespace, key, {
-    resolver: resolve(),
+    resolver: await resolve(),
     runtime: {
       getWebSocket,
     }
