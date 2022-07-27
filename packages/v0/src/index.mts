@@ -113,17 +113,6 @@ class Property {
   }
 }
 
-function* flattenTraits(eid: Id, traits: {[key: string]: any}) {
-  for (const [namespace, trait] of Object.entries(traits)) {
-    if (typeof trait === 'object') {
-      for (const [key, value] of Object.entries(trait)) {
-        yield new Property([eid, [namespace, key], value])
-      }
-    }
-    
-  }
-}
-
 function flattenObject(eid: Id, obj: any, parent?: string[], res: Property[] = []){
   for(let key in obj){
     let propName = parent ? parent.concat([ key ]) : [ key ];
@@ -164,7 +153,6 @@ export class Entity {
 
   update(traits: Object): Entity {
     const log = flattenObject(this.id, traits)
-    console.log('UPDATE', log)
     const changeset = [ ...this.changeset ]
 
     const props = new Map(this.props)
@@ -210,19 +198,10 @@ export class Entity {
             target[token] = target[token] || {}
             target = target[token]
           }
-
-          console.log('isArray', token, target)
         }
       } else {
         props[prop.attribute] = prop.value
       }
-
-      console.log(props)
-
-      /*const namespace = props[prop.namespace] || {}
-      namespace[prop.key] = prop.value
-
-      props[prop.namespace] = namespace*/
     }
 
     const nextProps = Object.assign(this.cache, props)
