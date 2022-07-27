@@ -18,6 +18,8 @@
     }
   },
   "dependencies": {
+    "@mycelial/core": "^0.2.8",
+    "@mycelial/wasm": "workspace:^0.2.8"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.22.0",

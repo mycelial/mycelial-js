@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Mycelial from '@mycelial/core';
+import type { Instance } from '@mycelial/core';
 import * as Websocket from '@mycelial/websocket';
 import { Store, Entity } from '@mycelial/v0';
 
@@ -13,6 +13,7 @@ const Context = React.createContext<any>({})
 
 type Props = {
   namespace: string,
+  runtime: any,
   opts?: {
     resolver: (meta: ImportMeta) => any
   }
@@ -20,11 +21,14 @@ type Props = {
 }
 
 export function Provider(props: Props) {
-  const [state, setState] = React.useState<{instance?: Mycelial.Instance}>({})
+  const [state, setState] = React.useState<{instance?: Instance, conn?: any}>({})
 
   React.useEffect(() => {
-    Mycelial.create(props.namespace, getRandomInt(1000000000), props?.opts).then((instance) => {
-      setState({ instance });
+    props.runtime.create(props.namespace, getRandomInt(1000000000)).then((instance: Instance) => {
+      const conn = Websocket.create(instance, {
+        endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
+      });
+      setState({ instance, conn });
     })
   }, [props.namespace])
 
@@ -70,7 +74,7 @@ export function useStore(callback: (a: Store) => void, args: any = []): { add: (
   }
 }
 
-export function useInstance(namespace: string, key: number, callback: (snapshot: Array<any>) => void) {
+/*export function useInstance(namespace: string, key: number, callback: (snapshot: Array<any>) => void) {
   const instance = React.useRef<any>();
   const socket = React.useRef<any>();
 
@@ -116,4 +120,4 @@ export function useInstance(namespace: string, key: number, callback: (snapshot:
   }, [namespace, key])
 
   return { commit }
-}
+}*/

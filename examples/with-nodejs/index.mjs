@@ -1,9 +1,8 @@
-import * as Mycelial from '@mycelial/core';
-import { resolve } from '@mycelial/nodejs';
+import * as Mycelial from '@mycelial/nodejs';
 
 (async function() {
   const mycelial = await Mycelial.create("namespace", 0, {
-    resolver: resolve(import.meta)
+    resolver: resolve()
   });
 
   mycelial.events.addEventListener('update', (evt) => {

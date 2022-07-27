@@ -1,11 +1,8 @@
-import * as Mycelial from '@mycelial/core';
 import { Store, Entity } from '@mycelial/v0';
-import { resolve } from '@mycelial/nodejs';
+import * as Mycelial from '@mycelial/nodejs';
 
 (async function() {
-  const instance = await Mycelial.create("namespace", 0, {
-    resolver: resolve(import.meta)
-  });
+  const instance = await Mycelial.create("namespace", 0);
 
   const store = new Store(instance);
 

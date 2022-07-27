@@ -24,6 +24,7 @@ importers:
     specifiers:
       '@babel/plugin-proposal-private-property-in-object': ^7.18.6
       '@mycelial/react': 0.1.4
+      '@mycelial/web': workspace:^0.1.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
       '@testing-library/user-event': ^13.5.0
@@ -38,6 +39,7 @@ importers:
       web-vitals: ^2.1.4
     dependencies:
       '@mycelial/react': link:../../packages/react
+      '@mycelial/web': link:../../packages/web
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_react-dom@18.1.0+react@18.1.0
       '@testing-library/user-event': 13.5.0
@@ -55,19 +57,15 @@ importers:
 
   examples/with-store:
     specifiers:
-      '@mycelial/core': 0.2.8
       '@mycelial/nodejs': workspace:^0.1.0
       '@mycelial/v0': 0.1.0
-      '@mycelial/wasm': 0.2.8
     dependencies:
-      '@mycelial/core': 0.2.8
       '@mycelial/nodejs': link:../../packages/nodejs
       '@mycelial/v0': link:../../packages/v0
-      '@mycelial/wasm': link:../../packages/wasm
 
   examples/with-webpack:
     specifiers:
-      '@mycelial/core': 0.2.8
+      '@mycelial/web': workspace:^0.1.0
       copy-webpack-plugin: ^11.0.0
       ts-loader: ^9.3.0
       typescript: ~4.5.2
@@ -75,7 +73,7 @@ importers:
       webpack-cli: ^4.9.2
       webpack-dev-server: ^4.9.0
     dependencies:
-      '@mycelial/core': 0.2.8
+      '@mycelial/web': link:../../packages/web
     devDependencies:
       copy-webpack-plugin: 11.0.0_webpack@5.72.1
       ts-loader: 9.3.0_typescript@4.5.5+webpack@5.72.1
@@ -126,6 +124,8 @@ importers:
 
   packages/nodejs:
     specifiers:
+      '@mycelial/core': ^0.2.8
+      '@mycelial/wasm': workspace:0.2.8
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       eslint: ^8.14.0
@@ -135,6 +135,8 @@ importers:
       typescript: ~4.7.1-rc
       ws: ^8.8.1
     dependencies:
+      '@mycelial/core': 0.2.8
+      '@mycelial/wasm': link:../wasm
       isomorphic-ws: 5.0.0_ws@8.8.1
       ws: 8.8.1
     devDependencies:
@@ -193,6 +195,27 @@ importers:
 
   packages/wasm:
     specifiers: {}
+
+  packages/web:
+    specifiers:
+      '@mycelial/core': ^0.2.8
+      '@mycelial/wasm': workspace:^0.2.8
+      '@typescript-eslint/eslint-plugin': ^5.22.0
+      '@typescript-eslint/parser': ^5.22.0
+      eslint: ^8.14.0
+      eslint-config-prettier: ^8.5.0
+      tslib: ^2.4.0
+      typescript: ~4.7.1-rc
+    dependencies:
+      '@mycelial/core': 0.2.8
+      '@mycelial/wasm': link:../wasm
+    devDependencies:
+      '@typescript-eslint/eslint-plugin': 5.22.0_d5e2456eef29dd5e95fb88e5d8eeaa4a
+      '@typescript-eslint/parser': 5.22.0_eslint@8.14.0+typescript@4.7.3
+      eslint: 8.14.0
+      eslint-config-prettier: 8.5.0_eslint@8.14.0
+      tslib: 2.4.0
+      typescript: 4.7.3
 
   packages/websocket:
     specifiers:

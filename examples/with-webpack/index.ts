@@ -1,4 +1,4 @@
-import * as Mycelial from '@mycelial/core';
+import * as Mycelial from '@mycelial/web';
 
 (async () => {
   const mycelial = await Mycelial.create("namespace", 0);

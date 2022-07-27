@@ -1,12 +1,13 @@
 import React from 'react';
 import * as Mycelial from '@mycelial/react';
+import * as Web from '@mycelial/web';
 
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
-    <Mycelial.Provider namespace='users'>
+    <Mycelial.Provider runtime={Web} namespace='users'>
       <Content />
     </Mycelial.Provider>
   )
