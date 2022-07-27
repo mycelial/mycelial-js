@@ -12,13 +12,9 @@ importers:
 
   examples/with-nodejs:
     specifiers:
-      '@mycelial/core': 0.2.8
       '@mycelial/nodejs': workspace:^0.1.0
-      '@mycelial/wasm': 0.2.8
     dependencies:
-      '@mycelial/core': 0.2.8
       '@mycelial/nodejs': link:../../packages/nodejs
-      '@mycelial/wasm': link:../../packages/wasm
 
   examples/with-react:
     specifiers:
@@ -9270,7 +9266,7 @@ packages:
       serialize-javascript: 6.0.0
       source-map: 0.6.1
       terser: 5.13.1
-      webpack: 5.72.1
+      webpack: 5.72.1_webpack-cli@4.9.2
 
   /terser/5.13.1:
     resolution: {integrity: sha512-hn4WKOfwnwbYfe48NgrQjqNOH9jzLqRcIfbYytOXCOv46LBfWr9bDS17MQqOi+BWGD0sJK3Sj5NC/gJjiojaoA==}
@@ -9781,7 +9777,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.0.0
-      webpack: 5.72.1
+      webpack: 5.72.1_webpack-cli@4.9.2
 
   /webpack-dev-server/4.9.0_webpack-cli@4.9.2+webpack@5.72.1:
     resolution: {integrity: sha512-+Nlb39iQSOSsFv0lWUuUTim3jDQO8nhK3E68f//J2r5rIcp4lULHXz2oZ0UVdEeWXEh5lSzYUlzarZhDAeAVQw==}
