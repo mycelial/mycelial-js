@@ -57,8 +57,8 @@ import { resolve } from '@mycelial/nodejs';
     todo: {
       id: "a-todo-item",
       actually: {
-        deeper: 42
-      }      
+        deeper: ["l", "i", "s", "t"]
+      }
     }
   }))
 
@@ -74,6 +74,7 @@ import { resolve } from '@mycelial/nodejs';
 
     for (const { properties } of items) {
       console.log(properties.todo.title, properties)
+      console.log(properties.todo.actually)
     }
   }
 

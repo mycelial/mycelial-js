@@ -116,7 +116,7 @@ class Property {
 function flattenObject(eid: Id, obj: any, parent?: string[], res: Property[] = []){
   for(let key in obj){
     let propName = parent ? parent.concat([ key ]) : [ key ];
-    if(typeof obj[key] == 'object'){
+    if(typeof obj[key] == 'object' && !Array.isArray(obj[key])){
       res = flattenObject(eid, obj[key], propName, res);
     } else {
       res = res.concat([
