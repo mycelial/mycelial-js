@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/web",
-  "version": "0.2.9-canary.3",
+  "version": "0.2.10-canary.0",
   "description": "Web API specific implementation",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -18,8 +18,8 @@
     }
   },
   "dependencies": {
-    "@mycelial/core": "0.2.9-canary.3",
-    "@mycelial/wasm": "0.2.9-canary.3"
+    "@mycelial/core": "0.2.10-canary.0",
+    "@mycelial/wasm": "0.2.10-canary.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.22.0",
