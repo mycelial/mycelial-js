@@ -7,9 +7,9 @@ import './App.css';
 
 function App() {
   return (
-    <Mycelial.Provider runtime={Web} namespace='users'>
+    <Mycelial.MycelialProvider runtime={Web} namespace='users'>
       <Content />
-    </Mycelial.Provider>
+    </Mycelial.MycelialProvider>
   )
 }
 
