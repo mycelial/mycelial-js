@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/websocket",
-  "version": "0.2.9-canary.3",
+  "version": "0.2.10-canary.0",
   "description": "The Mycelial Websocket Relay Adapter",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",

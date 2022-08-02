@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/v0",
-  "version": "0.2.9-canary.3",
+  "version": "0.2.10-canary.0",
   "description": "The Mycelial Store v0 API",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -14,7 +14,7 @@
   },
   "types": "./dist/index.d.mts",
   "dependencies": {
-    "@mycelial/core": "0.2.9-canary.3"
+    "@mycelial/core": "0.2.10-canary.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.22.0",
