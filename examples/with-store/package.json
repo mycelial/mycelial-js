@@ -7,7 +7,7 @@
   "scripts": {},
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/nodejs": "0.2.9-canary.1",
-    "@mycelial/v0": "0.2.9-canary.1"
+    "@mycelial/nodejs": "0.2.10-canary.0",
+    "@mycelial/v0": "0.2.10-canary.0"
   }
 }
