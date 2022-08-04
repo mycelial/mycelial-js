@@ -12,15 +12,15 @@ importers:
 
   examples/with-nodejs:
     specifiers:
-      '@mycelial/nodejs': 0.2.9-canary.1
+      '@mycelial/nodejs': 0.2.10
     dependencies:
       '@mycelial/nodejs': link:../../packages/nodejs
 
   examples/with-react:
     specifiers:
       '@babel/plugin-proposal-private-property-in-object': ^7.18.6
-      '@mycelial/react': 0.2.9-canary.1
-      '@mycelial/web': 0.2.9-canary.1
+      '@mycelial/react': 0.2.10
+      '@mycelial/web': 0.2.10
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
       '@testing-library/user-event': ^13.5.0
@@ -53,15 +53,15 @@ importers:
 
   examples/with-store:
     specifiers:
-      '@mycelial/nodejs': 0.2.9-canary.1
-      '@mycelial/v0': 0.2.9-canary.1
+      '@mycelial/nodejs': 0.2.10
+      '@mycelial/v0': 0.2.10
     dependencies:
       '@mycelial/nodejs': link:../../packages/nodejs
       '@mycelial/v0': link:../../packages/v0
 
   examples/with-webpack:
     specifiers:
-      '@mycelial/web': 0.2.9-canary.1
+      '@mycelial/web': 0.2.10
       copy-webpack-plugin: ^11.0.0
       ts-loader: ^9.3.0
       typescript: ~4.5.2
@@ -80,8 +80,8 @@ importers:
 
   examples/with-websocket:
     specifiers:
-      '@mycelial/core': 0.2.9-canary.1
-      '@mycelial/websocket': 0.2.9-canary.1
+      '@mycelial/core': 0.2.10
+      '@mycelial/websocket': 0.2.10
       copy-webpack-plugin: ^11.0.0
       ts-loader: ^9.3.0
       typescript: ~4.5.2
@@ -101,7 +101,7 @@ importers:
 
   packages/core:
     specifiers:
-      '@mycelial/wasm': 0.2.9-canary.1
+      '@mycelial/wasm': 0.2.10
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       eslint: ^8.14.0
@@ -120,8 +120,8 @@ importers:
 
   packages/nodejs:
     specifiers:
-      '@mycelial/core': 0.2.9-canary.1
-      '@mycelial/wasm': 0.2.9-canary.1
+      '@mycelial/core': 0.2.10
+      '@mycelial/wasm': 0.2.10
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       eslint: ^8.14.0
@@ -147,9 +147,9 @@ importers:
 
   packages/react:
     specifiers:
-      '@mycelial/core': 0.2.9-canary.1
-      '@mycelial/v0': 0.2.9-canary.1
-      '@mycelial/websocket': 0.2.9-canary.1
+      '@mycelial/core': 0.2.10
+      '@mycelial/v0': 0.2.10
+      '@mycelial/websocket': 0.2.10
       '@types/lodash.isequal': ^4.5.6
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
@@ -174,7 +174,7 @@ importers:
 
   packages/v0:
     specifiers:
-      '@mycelial/core': 0.2.9-canary.1
+      '@mycelial/core': 0.2.10
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       eslint: ^8.14.0
@@ -196,8 +196,8 @@ importers:
 
   packages/web:
     specifiers:
-      '@mycelial/core': 0.2.9-canary.1
-      '@mycelial/wasm': 0.2.9-canary.1
+      '@mycelial/core': 0.2.10
+      '@mycelial/wasm': 0.2.10
       '@typescript-eslint/eslint-plugin': ^5.22.0
       '@typescript-eslint/parser': ^5.22.0
       eslint: ^8.14.0
