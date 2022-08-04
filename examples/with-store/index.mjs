@@ -5,6 +5,9 @@ import * as Mycelial from '@mycelial/nodejs';
   const instance = await Mycelial.create("namespace");
 
   const store = new Store(instance);
+  const unsubscribe = store.subscribe((store) => {
+    console.log('Changed', store)
+  })
 
   // Add a new project entity
   store.add(Entity.from("project-1", {
@@ -14,6 +17,8 @@ import * as Mycelial from '@mycelial/nodejs';
       name: "Mycelial"
     }
   }))
+
+  unsubscribe();
 
   // Add a new todo item with a reference to the project created above
   store.add(Entity.from("item-0", {

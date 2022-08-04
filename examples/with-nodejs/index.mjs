@@ -11,12 +11,18 @@ import * as Mycelial from '@mycelial/nodejs';
     console.log('apply', evt);
   });
 
+  const unsubscribe = mycelial.subscribe((spore) => {
+    console.log('Change', spore)
+  })
+
   mycelial.commit([
     {
       $id: "id",
       attribute: "value"
     }
   ]);
+
+  unsubscribe();
 
   console.log(mycelial.log.to_vec())
 })()

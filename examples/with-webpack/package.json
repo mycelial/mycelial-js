@@ -10,7 +10,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@mycelial/web": "0.2.10-canary.0"
+    "@mycelial/web": "0.2.10"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
