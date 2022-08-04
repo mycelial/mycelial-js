@@ -1,6 +1,6 @@
 {
   "name": "@mycelial/nodejs",
-  "version": "0.2.10-canary.0",
+  "version": "0.2.10",
   "description": "NodeJS specific implementation",
   "license": "Apache-2.0",
   "author": "Mycelial <hello@mycelial.com>",
@@ -18,8 +18,8 @@
     }
   },
   "dependencies": {
-    "@mycelial/core": "0.2.10-canary.0",
-    "@mycelial/wasm": "0.2.10-canary.0",
+    "@mycelial/core": "0.2.10",
+    "@mycelial/wasm": "0.2.10",
     "import-meta-resolve": "^2.0.3",
     "isomorphic-ws": "^5.0.0",
     "ws": "^8.8.1"
