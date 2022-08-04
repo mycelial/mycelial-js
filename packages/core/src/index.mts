@@ -45,6 +45,18 @@ export class Instance implements Instance {
     })
   }
 
+  subscribe(callback: (instance: Instance) => void) {
+    const handler = () => callback(this)
+
+    this.events.addEventListener('update', handler)
+    this.events.addEventListener('apply', handler)
+
+    return () => {
+      this.events.removeEventListener('update', handler)
+      this.events.removeEventListener('apply', handler)
+    }
+  }
+
   apply(ops: any) {
     this.log.apply(JSON.stringify(ops))
   }
