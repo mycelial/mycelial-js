@@ -91,10 +91,10 @@ import * as Websocket from '@mycelial/websocket';
 ```
 
 3. Create an instance of our library, called a Spore, by calling create and 
-   passing it a namespace and a unique client id.
+   passing it a namespace.
 
 ```js
-const spore = Mycelial.create("contacts", 123)
+const spore = Mycelial.create("contacts")
 ```
 
 4. Create and attach a network transport
@@ -105,17 +105,21 @@ const ws = Websocket.create(spore, {
 });
 ```
 
-5. Subscribe to changes. `update` events represent local changes, `apply` events
-represent remote changes.
-
-```js
-spore.events.addEventListener('update', (evt) => {
-  console.log('update', evt);
-});
-spore.events.addEventListener('apply', (evt) => {
-  console.log('apply', evt);
-});
-```
+5. Subscribe to changes.
+  - You can use `#subscribe` method to receive changes:
+    ```js
+    spore.subscribe((spore) => {})
+    ```
+  - Or, if you need a lower access, `update` events represent local changes, `apply` events
+represent remote changes:
+   ```js
+   spore.events.addEventListener('update', (evt) => {
+     console.log('update', evt);
+   });
+   spore.events.addEventListener('apply', (evt) => {
+     console.log('apply', evt);
+   });
+   ```
 
 6. Add a record to the spore. 
 
@@ -165,13 +169,12 @@ spore.commit([
 import * as Mycelial from '@mycelial/core';
 ```
 
-### const spore = Mycelial.create(namespace, key)
+### const spore = Mycelial.create(namespace)
 
 Creates a new Spore (composition of CRDTs).
 
 - `namespace` (string) creates a namespace that acts as a topic when publishing
   changes.
-- `key` (number) a unique replica id
 
 ### spore.events.addEventListener(event, handler)
 
@@ -181,7 +184,10 @@ Creates event handlers, providing reactivity to changes.
   'update' events occur after appending values locally, 'apply' events occur
   when remote changes are synchronized.
 
-### spore.commit([[string, string, string | number | boolean]]) 
+### spore.subscribe((spore: Mycelial.Instance) => void)
+Subscribe for the store changes, remotely or locally happened, returns the unsubscribe function.
+
+### spore.commit([ { $id: string | number, [key: string]: string | number } ]) 
 
 Appends new records to the spore. 
 
@@ -200,18 +206,56 @@ spore.commit([
 
 ```js
 import * as Websocket from '@mycelial/websocket';
-const spore = Mycelial.create("contacts", 123);
+const spore = Mycelial.create("contacts");
 
 const ws = Websocket.create(spore, {
   endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
 });
 ```
 
-### Websocket.create(spore, endpoint)
+### Websocket.create(spore, { endpoint: string })
 
 Creates a WebSocket adapter that synchronizes the replica across two or more
 nodes.
 
+## Store V0 API
+```js
+import { Store, Entity } from '@mycelial/v0';
+const instance = Mycelial.create("contacts");
+const store = new Store(instance);
+
+const unsubscribe = store.subscribe((store) => {
+  console.log(store);
+});
+
+const contact = Entity.from('<unique-contact-id>', {
+  email: "contact@example.com",
+});
+
+const added = store.add(contact)
+const updated = added.update({
+  phone: "+99999999999"
+});
+
+store.add(updated);
+
+unsubscribe();
+```
+
+### Store.prototype.subscribe(callback: (store: Store) => void): () => void
+Subscribe for the store changes, remotely or locally happened, returns the unsubscribe function.
+
+### Store.prototype.add(entity: Entity): Entity
+Add the provided entity to its index, returns a clean instance back.
+
+### Entity.from(id: string | number, object: { [key: string]: string | number }): Entity
+Create entity from id and object
+- `id` – a unique key of the entity
+- `object` – actual data
+
+### Entity.prototype.update(object: { [key: string]: string | number }): Entity
+Update the entity, returns a new instance
+- `object` – the data to update the entity with
 
 ## License
 Apache 2.0
