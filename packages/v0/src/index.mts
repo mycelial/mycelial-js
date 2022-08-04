@@ -240,6 +240,16 @@ export class Store {
     this.events.dispatchEvent(createCustomEvent('change', { detail: {} }))
   }
 
+  subscribe(callback: (instance: Store) => void) {
+    const handler = () => callback(this)
+
+    this.events.addEventListener('change', handler)
+
+    return () => {
+      this.events.removeEventListener('change', handler)
+    }
+  }
+
   add(entity: Entity) {
     this.instance.log.aggregateOps(true)
 
