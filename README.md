@@ -185,7 +185,7 @@ Creates event handlers, providing reactivity to changes.
   when remote changes are synchronized.
 
 ### spore.subscribe((spore: Mycelial.Instance) => void)
-Subscribe for the store changes, remotely or locally happened, returns the unsubscribe function.
+Subscribe for the spore changes, remotely or locally happened, returns the unsubscribe function.
 
 ### spore.commit([ { $id: string | number, [key: string]: string | number } ]) 
 
