@@ -71,7 +71,7 @@ application is decentralized.
 
 You don't need to know exactly how CRDTs work to use them; you just need to know
 how to use our APIs. But if you're interested in learning more about CRDTS, you
-can checkout [crdt.tech](https://crdt.tech/)] or watch our introductory
+can check out [crdt.tech](https://crdt.tech/) or watch our introductory
 [video](https://www.youtube.com/watch?v=gZP2VUmH05A&t).
 
 ## Quickstart
@@ -79,173 +79,165 @@ can checkout [crdt.tech](https://crdt.tech/)] or watch our introductory
 1. You can install our libraries from npm.
 
 ```bash
-npm install @mycelial/core
+npm install @mycelial/web # or @mycelial/nodejs
+npm install @mycelial/v0
 npm install @mycelial/websocket
 ```
 
 2. Import our modules.
 
 ```js
-import * as Mycelial from '@mycelial/core';
+import * as Mycelial from '@mycelial/web'; // or '@mycelial/nodejs'
+import { Store, Entity } from '@mycelial/v0';
 import * as Websocket from '@mycelial/websocket';
 ```
 
-3. Create an instance of our library, called a Spore, by calling create and 
-   passing it a namespace.
+3. Create an instance of our library by calling create and passing it a namespace.
 
 ```js
-const spore = Mycelial.create("contacts")
+const instance = Mycelial.create("contacts")
 ```
 
-4. Create and attach a network transport
+4. Create and attach a network adapter
 
 ```js
-const ws = Websocket.create(spore, {
+const disconnect = Websocket.create(instance, {
   endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
 });
 ```
-
-5. Subscribe to changes.
-  - You can use `#subscribe` method to receive changes:
-    ```js
-    spore.subscribe((spore) => {})
-    ```
-  - Or, if you need a lower access, `update` events represent local changes, `apply` events
-represent remote changes:
-   ```js
-   spore.events.addEventListener('update', (evt) => {
-     console.log('update', evt);
-   });
-   spore.events.addEventListener('apply', (evt) => {
-     console.log('apply', evt);
-   });
-   ```
-
-6. Add a record to the spore. 
+5. Create a store
 
 ```js
-spore.commit([
-  {
-    $id: 100,
-    name: "James M.",
-    phone: "5555555555",
-    email: "james@mycelial.com"
-  }
-]);
+const store = new Store(instance);
+```
+
+6. Subscribe to changes.
+  - You can use `#subscribe` method to listen for changes in the store:
+```js
+const unsubscribe = store.subscribe((store) => {
+  console.log('something changed')
+});
+```
+
+7. Create an entity
+
+```js
+const contact = Entity.from('<unique-contact-id>', {
+  kind: 'contact',
+  name: 'James M.',
+  email: 'james@mycelial.com',
+  phone: '5555555555',
+  archived: false
+});
+```
+
+8. Add the entity to the store. 
+
+```js
+store.add(contact);
+```
+
+9. Query the store.
+
+```js
+const contacts = store.filter(
+  (entity) =>
+    entity.properties.kind === 'contact' &&
+    entity.properties.archived === false,
+);
+
+for (const contact of contacts) {
+  console.log(contact.properties);
+}
 ```
 
 Complete Snippet
 
 ```js
-import * as Mycelial from '@mycelial/core';
+import * as Mycelial from '@mycelial/web'; // or '@mycelial/nodejs'
+import { Store, Entity } from '@mycelial/v0';
 import * as Websocket from '@mycelial/websocket';
 
-const spore = Mycelial.create("contacts", 123);
+const instance = Mycelial.create("contacts")
 
-const ws = Websocket.create(spore, {
+const disconnect = Websocket.create(instance, {
   endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
 });
 
-spore.events.addEventListener('update', (evt) => {
-  console.log('update', evt);
-});
-spore.events.addEventListener('apply', (evt) => {
-  console.log('apply', evt);
+const store = new Store(instance);
+
+const unsubscribe = store.subscribe((store) => {
+  console.log('something changed')
 });
 
-spore.commit([
-  {
-    $id: 100,
-    name: "James M.",
-    phone: "5555555555",
-    email: "james@mycelial.com"
-  }
-]);
+const contact = Entity.from('<unique-contact-id>', {
+  kind: 'contact',
+  name: 'James M.',
+  email: 'james@mycelial.com',
+  phone: '5555555555',
+  archived: false
+});
+
+store.add(contact);
+
+const contacts = store.filter(
+  (entity) =>
+    entity.properties.kind === 'contact' &&
+    entity.properties.archived === false,
+);
+
+for (const contact of contacts) {
+  console.log(contact.properties);
+}
 ```
 
-## Spore API
+## Platform API
 
 ```js
-import * as Mycelial from '@mycelial/core';
+import * as Mycelial from '@mycelial/web'; // or '@mycelial/nodejs'
 ```
 
-### const spore = Mycelial.create(namespace)
+### const instance = Mycelial.create(namespace: string): Instance;
 
-Creates a new Spore (composition of CRDTs).
-
-- `namespace` (string) creates a namespace that acts as a topic when publishing
-  changes.
-
-### spore.events.addEventListener(event, handler)
-
-Creates event handlers, providing reactivity to changes.
-
-- `event` ('update' | 'apply') specifies which type of event to listen to.
-  'update' events occur after appending values locally, 'apply' events occur
-  when remote changes are synchronized.
-
-### spore.subscribe((spore: Mycelial.Instance) => void)
-Subscribe for the spore changes, remotely or locally happened, returns the unsubscribe function.
-
-### spore.commit([ { $id: string | number, [key: string]: string | number } ]) 
-
-Appends new records to the spore. 
-
-```js
-spore.commit([
-  {
-    $id: 100,
-    name: "James M.",
-    phone: "5555555555",
-    email: "james@mycelial.com"
-  }
-]);
-```
+Create an instance of our core library. The namespace is used as a topic for
+pub/sub.
 
 ## Websocket API
 
 ```js
 import * as Websocket from '@mycelial/websocket';
-const spore = Mycelial.create("contacts");
+const instance = Mycelial.create("contacts");
 
-const ws = Websocket.create(spore, {
+const disconnect = Websocket.create(instance, {
   endpoint: 'wss://v0alpha-relay.fly.dev/v0alpha'
 });
+
+disconnect();
 ```
 
-### Websocket.create(spore, { endpoint: string })
+### Websocket.create(instance: Instance, { endpoint: string }): () => void
 
 Creates a WebSocket adapter that synchronizes the replica across two or more
-nodes.
+nodes. The return value is a function that disconnects the websocket when
+called.
 
 ## Store V0 API
+
 ```js
-import { Store, Entity } from '@mycelial/v0';
-const instance = Mycelial.create("contacts");
-const store = new Store(instance);
-
-const unsubscribe = store.subscribe((store) => {
-  console.log(store);
-});
-
-const contact = Entity.from('<unique-contact-id>', {
-  email: "contact@example.com",
-});
-
-const added = store.add(contact)
-const updated = added.update({
-  phone: "+99999999999"
-});
-
-store.add(updated);
-
-unsubscribe();
+import { Entity, Store } from '@mycelial/v0';
 ```
 
+### const store = new Store(instance: Instance): ;
+
+Instantiate a new store, passing in the CRDT instance.
+
 ### Store.prototype.subscribe(callback: (store: Store) => void): () => void
-Subscribe for the store changes, remotely or locally happened, returns the unsubscribe function.
+
+Subscribe to all store changes, both remote and local. The return value is a
+function that can be called to unsubscribe.
 
 ### Store.prototype.add(entity: Entity): Entity
+
 Add the provided entity to its index, returns a clean instance back.
 
 ### Entity.from(id: string | number, object: { [key: string]: string | number }): Entity
