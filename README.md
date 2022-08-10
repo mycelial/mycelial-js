@@ -70,7 +70,7 @@ application is decentralized.
 ### Learn more about CRDTs
 
 You don't need to know exactly how CRDTs work to use them; you just need to know
-how to use our APIs. But if you're interested in learning more about CRDTS, you
+how to use our APIs. But if you're interested in learning more about CRDTs, you
 can check out [crdt.tech](https://crdt.tech/) or watch our introductory
 [video](https://www.youtube.com/watch?v=gZP2VUmH05A&t).
 
@@ -95,7 +95,10 @@ import * as Websocket from '@mycelial/websocket';
 3. Create an instance of our library by calling create and passing it a namespace.
 
 ```js
-const instance = Mycelial.create("contacts")
+// NOTE: if you use a shared public relay, you'll want to use a unique namespace. 
+// The namespace is used as a pub/sub topic, so ensuring it's unique will avoid
+// namespace collisions.
+const instance = Mycelial.create("mycelial/contacts")
 ```
 
 4. Create and attach a network adapter
