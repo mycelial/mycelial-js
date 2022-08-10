@@ -122,7 +122,7 @@ const unsubscribe = store.subscribe((store) => {
 });
 ```
 
-7. Create an entity
+7. Create an entity by passing it a unique id followed by an object.
 
 ```js
 const contact = Entity.from('<unique-contact-id>', {
